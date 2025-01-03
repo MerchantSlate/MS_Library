@@ -12,6 +12,11 @@ Address `0xd680762e0E498aAfD200545307000eFf12e8E638`
 7. [Polygon](https://www.oklink.com/polygon/address/0xd680762e0e498aafd200545307000eff12e8e638/contract)
 
 ## Setup
+Install using `yarn add merchantslate` or `npm install merchantslate` 
+
+OR use in browsers through CDN
+`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.0.1/dist/index.min.js"></script>`
+
 Note: Public RPCs obtained from https://chainlist.org/ are used as default for development only and should be updated using `config`
 
 ```

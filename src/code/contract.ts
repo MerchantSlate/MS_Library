@@ -1,8 +1,9 @@
+import { ZeroAddress } from "ethers";
 import { EVMAddress, ErrorCodeString, ErrorResponse, StringObj } from "../types";
 
 const
     /** Zero Address */
-    ZERO_ADDRESS: EVMAddress = `0x0000000000000000000000000000000000000000`,
+    ZERO_ADDRESS = ZeroAddress as EVMAddress,
     /** Contract Messages */
     contractErrors: StringObj = {
         ERROR_INVALID_TOKEN: `Token used is invalid. Please provide another token.`,

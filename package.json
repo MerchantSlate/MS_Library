@@ -1,0 +1,37 @@
+{
+  "name": "merchantslate",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "module": "dist/index.min.js",
+  "browser": "dist/index.min.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && webpack"
+  },
+  "keywords": [
+    "onchain crypto payment",
+    "crypto payment",
+    "payment database"
+  ],
+  "author": "Prince Hasn",
+  "license": "MIT",
+  "description": "MerchantSlate is the onchain crypto payment database",
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "clean-webpack-plugin": "^4.0.0",
+    "esbuild": "^0.24.2",
+    "terser-webpack-plugin": "^5.3.11",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  },
+  "dependencies": {
+    "ethers": "^6.13.4"
+  },
+  "files": [
+    "dist/"
+  ]
+}

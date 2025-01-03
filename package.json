@@ -14,6 +14,14 @@
     "payment database"
   ],
   "author": "Prince Hasn",
+  "homepage": "https://github.com/MerchantSlate/MerchantSlate}#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MerchantSlate/MerchantSlate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MerchantSlate/MerchantSlate/issues"
+  },
   "license": "MIT",
   "description": "MerchantSlate is the onchain crypto payment database",
   "devDependencies": {

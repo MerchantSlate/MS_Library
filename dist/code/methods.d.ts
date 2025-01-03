@@ -2,9 +2,9 @@ import { BrowserProvider, JsonRpcProvider, InterfaceAbi } from "ethers";
 import { ChainIds, ContractFunctions, EVMAddress } from "../types";
 declare const 
 /** Convert to Wei Values */
-toWei: (value: string, decimals: number) => string, 
+toWei: (value: string, decimals?: number) => string, 
 /** Convert from Wei Values */
-fromWei: (value: string, decimals: number) => number, 
+fromWei: (value: string, decimals?: number) => string, 
 /** Get browser wallet */
 getBrowserWallet: () => any, 
 /** wallet provider */

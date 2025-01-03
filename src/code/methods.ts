@@ -13,25 +13,24 @@ import { ChainIds, ContractFunctions, EVMAddress } from "../types";
 
 const
     /** Get BigNumbers */
-    toBig = (decimals: number) => {
-        return (10n ** toBigInt(decimals || 18))?.toString();
-    },
+    decimalFactor = (decimals: number) =>
+        10n ** toBigInt(decimals),
     /** Convert to Wei Values */
     toWei = (
         value: string,
-        decimals: number,
-    ): string => {
-        const b = toBig(decimals || 18);
-        return (+value * +b)?.toFixed(0);
-    },
+        decimals: number = 18,
+    ): string => (
+        toBigInt(value) *
+        decimalFactor(decimals)
+    )?.toString(),
     /** Convert from Wei Values */
     fromWei = (
         value: string,
-        decimals: number,
-    ): number => {
-        const b = toBig(decimals || 18);
-        return +value / +b;
-    },
+        decimals: number = 18,
+    ): string => (
+        toBigInt(value) /
+        decimalFactor(decimals)
+    )?.toString(),
     /** Get browser wallet */
     getBrowserWallet = () => {
         try { // @ts-ignore

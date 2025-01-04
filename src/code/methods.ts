@@ -27,10 +27,9 @@ const
     fromWei = (
         value: string,
         decimals: number = 18,
-    ): string => (
-        toBigInt(value) /
-        decimalFactor(decimals)
-    )?.toString(),
+    ): number =>
+        +toBigInt(value)?.toString() /
+        +decimalFactor(decimals)?.toString(),
     /** Get browser wallet */
     getBrowserWallet = () => {
         try { // @ts-ignore

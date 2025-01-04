@@ -1,5 +1,5 @@
 import { config, getChainsData, getConfig } from "./code/config";
-import { contractErrors } from "./code/contract";
+import { ZERO_ADDRESS, contractErrors } from "./code/contract";
 import { merchantFee, merchantSignup, getMerchantId, merchantFeeValueText } from "./code/merchant";
 import { fromWei, getBrowserWallet, getContract, getProvider, getWalletAddress, toWei } from "./code/methods";
 import { getPayments, loadPayments, payProduct, payValueText } from "./code/payments";
@@ -7,5 +7,5 @@ import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts
 import { processNumbers, timeAMPM, fullDateText } from "./code/showcase";
 import { totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer } from "./code/stakes";
 import { getTokenData, tokenOnchainData } from "./code/token";
-import { PaymentData, PaymentDataAll, ProductData, ProductDataAll } from "./types";
-export { getChainsData, getConfig, config, contractErrors, toWei, fromWei, getBrowserWallet, getProvider, getContract, getWalletAddress, getTokenData, tokenOnchainData, merchantFeeValueText, merchantFee, merchantSignup, getMerchantId, productFee, productFeeText, addProduct, updateProduct, deleteProduct, getProducts, getProductDetails, loadProducts, ProductData, ProductDataAll, payValueText, payProduct, getPayments, loadPayments, PaymentData, PaymentDataAll, processNumbers, timeAMPM, fullDateText, totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer, };
+import { ErrorResponse, PaymentData, PaymentDataAll, ProductData, ProductDataAll } from "./types";
+export { getChainsData, getConfig, config, ZERO_ADDRESS, contractErrors, ErrorResponse, toWei, fromWei, getBrowserWallet, getProvider, getContract, getWalletAddress, getTokenData, tokenOnchainData, merchantFeeValueText, merchantFee, merchantSignup, getMerchantId, productFee, productFeeText, addProduct, updateProduct, deleteProduct, getProducts, getProductDetails, loadProducts, ProductData, ProductDataAll, payValueText, payProduct, getPayments, loadPayments, PaymentData, PaymentDataAll, processNumbers, timeAMPM, fullDateText, totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer, };

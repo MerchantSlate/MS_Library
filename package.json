@@ -1,9 +1,9 @@
 {
   "name": "merchantslate",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.js",
-  "module": "dist/index.min.js",
-  "browser": "dist/index.min.js",
+  "module": "dist/merchant.min.js",
+  "browser": "dist/merchant.min.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc && webpack"

@@ -6,7 +6,7 @@ module.exports = {
     entry: './src/index.ts', // Entry point for your library
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'index.min.js', // Output file name
+        filename: 'merchant.min.js', // Output file name
         library: 'merchant',         // Global variable for browsers
         libraryTarget: 'umd',         // Universal Module Definition
         globalObject: 'this',         // Fix for UMD in Node.js

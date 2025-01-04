@@ -4,7 +4,7 @@ declare const
 /** Convert to Wei Values */
 toWei: (value: string, decimals?: number) => string, 
 /** Convert from Wei Values */
-fromWei: (value: string, decimals?: number) => string, 
+fromWei: (value: string, decimals?: number) => number, 
 /** Get browser wallet */
 getBrowserWallet: () => any, 
 /** wallet provider */

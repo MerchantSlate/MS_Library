@@ -1,5 +1,6 @@
 {
     "ETH": {
+        "deployed": false,
         "chainId": "0x1",
         "chainName": "Ethereum Mainnet",
         "nativeCurrency": {
@@ -18,6 +19,7 @@
         "coingeckoId": "ethereum"
     },
     "BSC": {
+        "deployed": true,
         "chainId": "0x38",
         "chainName": "Binance Smart Chain",
         "nativeCurrency": {
@@ -36,6 +38,7 @@
         "coingeckoId": "binance-smart-chain"
     },
     "POLYGON": {
+        "deployed": true,
         "chainId": "0x89",
         "chainName": "Polygon Mainnet",
         "nativeCurrency": {
@@ -54,6 +57,7 @@
         "coingeckoId": "polygon"
     },
     "AVALANCHE": {
+        "deployed": true,
         "chainId": "0xa86a",
         "chainName": "Avalanche C-Chain",
         "nativeCurrency": {
@@ -72,6 +76,7 @@
         "coingeckoId": "avalanche-2"
     },
     "FANTOM": {
+        "deployed": true,
         "chainId": "0xfa",
         "chainName": "Fantom Opera",
         "nativeCurrency": {
@@ -90,6 +95,7 @@
         "coingeckoId": "fantom"
     },
     "ARBITRUM": {
+        "deployed": true,
         "chainId": "0xa4b1",
         "chainName": "Arbitrum One",
         "nativeCurrency": {
@@ -108,6 +114,7 @@
         "coingeckoId": "arbitrum"
     },
     "OPTIMISM": {
+        "deployed": true,
         "chainId": "0xa",
         "chainName": "Optimism",
         "nativeCurrency": {
@@ -126,6 +133,7 @@
         "coingeckoId": "optimism"
     },
     "CELO": {
+        "deployed": true,
         "chainId": "0xa4ec",
         "chainName": "Celo",
         "nativeCurrency": {

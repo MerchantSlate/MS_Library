@@ -7,13 +7,14 @@ import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts
 import { processNumbers, timeAMPM, fullDateText } from "./code/showcase";
 import { totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer } from "./code/stakes";
 import { getTokenData, tokenOnchainData } from "./code/token";
-import { ErrorResponse, PaymentData, PaymentDataAll, ProductData, ProductDataAll } from "./types";
+import { BlockchainNetwork, ErrorResponse, PaymentData, PaymentDataAll, ProductData, ProductDataAll } from "./types";
 
 export {
     // config
     getChainsData,
     getConfig,
     config,
+    BlockchainNetwork,
 
     // contract address
     ZERO_ADDRESS,

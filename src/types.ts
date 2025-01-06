@@ -207,8 +207,6 @@ interface ProductDataAll extends PaginationData {
 }
 
 export interface BlockchainNetwork {
-    /** Deployed status */
-    deployed: boolean;
     /** The chain ID in hexadecimal format (e.g., '0x1' for Ethereum Mainnet) */
     chainId: string;
     /** The name of the chain (e.g., 'Ethereum Mainnet') */

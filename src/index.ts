@@ -7,7 +7,7 @@ import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts
 import { processNumbers, timeAMPM, fullDateText } from "./code/showcase";
 import { totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer } from "./code/stakes";
 import { getTokenData, tokenOnchainData } from "./code/token";
-import { BlockchainNetwork, ErrorResponse, PaymentData, PaymentDataAll, ProductData, ProductDataAll } from "./types";
+import { BlockchainNetwork, ChainIds, EVMAddress, ErrorResponse, PaymentChain, PaymentData, PaymentDataAll, ProductChain, ProductData, ProductDataAll } from "./types";
 
 export {
     // config
@@ -15,11 +15,13 @@ export {
     getConfig,
     config,
     BlockchainNetwork,
-
+    ChainIds,
+    
     // contract address
     ZERO_ADDRESS,
     contractErrors,
     ErrorResponse,
+    EVMAddress,
     
     // methods
     toWei,
@@ -49,6 +51,7 @@ export {
     getProductDetails,
     loadProducts,
     ProductData,
+    ProductChain,
     ProductDataAll,
 
     // payments
@@ -57,6 +60,7 @@ export {
     getPayments,
     loadPayments,
     PaymentData,
+    PaymentChain,
     PaymentDataAll,
 
     // showcase

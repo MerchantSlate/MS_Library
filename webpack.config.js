@@ -1,6 +1,8 @@
-const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const
+    path = require('path'),
+    webpack = require('webpack'),
+    { CleanWebpackPlugin } = require('clean-webpack-plugin'),
+    TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: './src/index.ts', // Entry point for your library
@@ -25,6 +27,10 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(), // Clean output directory before each build
+        new webpack.BannerPlugin({
+            banner: `/*! MIT License. MerchantSlate Contract SDK. https://opensource.org/licenses/MIT */`,
+            raw: true, // Ensures the comment appears as-is without being wrapped
+        }),
     ],
     optimization: {
         minimize: true,           // Minify the output

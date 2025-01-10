@@ -8,7 +8,7 @@ const
         chain: ChainIds,
     ): Promise<number | ErrorResponse> => {
         try {
-            const contract = await getContract(chain, true);
+            const contract = await getContract(chain);
             return +(await contract.TotalStakes())?.toString();
         } catch (error: any) {
             return errorResponse(error);

@@ -20,15 +20,15 @@ const
         value: string,
         decimals: number = 18,
     ): string => (
-        toBigInt(value) *
-        decimalFactor(decimals)
-    )?.toString(),
+        +value *
+        +decimalFactor(decimals)?.toString()
+    )?.toFixed(0),
     /** Convert from Wei Values */
     fromWei = (
         value: string,
         decimals: number = 18,
     ): number =>
-        +toBigInt(value)?.toString() /
+        +value /
         +decimalFactor(decimals)?.toString(),
     /** Get browser wallet */
     getBrowserWallet = () => {

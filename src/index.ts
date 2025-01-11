@@ -4,7 +4,7 @@ import { merchantFee, merchantSignup, getMerchantId, merchantFeeValueText } from
 import { fromWei, getBrowserWallet, getContract, getProvider, getWalletAddress, toWei } from "./code/methods";
 import { getPayments, loadPayments, payProduct, payValueText } from "./code/payments";
 import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts, productFee, productFeeText, updateProduct } from "./code/products";
-import { processNumbers, timeAMPM, fullDateText } from "./code/showcase";
+import { processNumbers, timeAMPM, fullDateText, truncateText } from "./code/showcase";
 import { totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer } from "./code/stakes";
 import { getTokenData, tokenOnchainData } from "./code/token";
 import { BlockchainNetwork, ChainIds, EVMAddress, ErrorResponse, PaymentChain, PaymentData, PaymentDataAll, ProductChain, ProductData, ProductDataAll } from "./types";
@@ -22,6 +22,7 @@ export {
     contractErrors,
     ErrorResponse,
     EVMAddress,
+    truncateText,
     
     // methods
     toWei,

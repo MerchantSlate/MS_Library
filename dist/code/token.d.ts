@@ -13,5 +13,5 @@ getTokenRate: ({ chain, tokenAddress, weiAmount, referenceAddress, referenceDeci
     weiAmount: string;
     referenceAddress?: EVMAddress;
     referenceDecimals?: number;
-}) => Promise<string | number | undefined>;
+}) => Promise<number | undefined>;
 export { getTokenLogo, getTokenData, tokenOnchainData, getTokenRate, };

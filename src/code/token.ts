@@ -117,10 +117,52 @@ const
         } catch (error: any) {
             return
         };
-    };
+    },
+    /** Token Rate */
+    getTokenRate = async ({
+        chain,
+        tokenAddress,
+        referenceAddress,
+        weiAmount,
+    }: {
+        chain: ChainIds,
+        tokenAddress: EVMAddress,
+        referenceAddress: EVMAddress,
+        weiAmount: string,
+    }) => {
+        try {
+            const contract = await getContract(chain);
+            return (
+                await contract.tokenRate(
+                    tokenAddress,
+                    weiAmount,
+                    referenceAddress
+                )
+            )?.toString();
+        } catch (e) {
+            return
+        };
+    },
+    /** Token Price (USD) */
+    getTokenUSDValue = async ({
+        chain,
+        tokenAddress,
+        weiAmount,
+    }: {
+        chain: ChainIds,
+        tokenAddress: EVMAddress,
+        weiAmount: string,
+    }) => await getTokenRate({
+        chain,
+        tokenAddress,
+        referenceAddress: getChainsData()[chain]?.USDT,
+        weiAmount
+    });
 
 export {
     getTokenLogo,
     getTokenData,
     tokenOnchainData,
+    getTokenRate,
+    getTokenUSDValue,
 };

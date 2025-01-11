@@ -118,63 +118,45 @@ const
             return
         };
     },
-    /** Token Rate */
+    /** Token Rate (Default USDT) */
     getTokenRate = async ({
         chain,
         tokenAddress,
-        referenceAddress,
         weiAmount,
-        decimals = 18,
+        referenceAddress,
+        referenceDecimals,
     }: {
         chain: ChainIds,
         tokenAddress: EVMAddress,
-        referenceAddress: EVMAddress,
         weiAmount: string,
-        decimals: number,
+        referenceAddress?: EVMAddress,
+        referenceDecimals?: number,
     }) => {
         try {
             const
                 contract = await getContract(chain),
+                USDT = getChainsData()[chain]?.USDT,
                 rate = (
                     await contract.tokenRate(
                         tokenAddress,
                         weiAmount,
-                        referenceAddress
+                        referenceAddress || USDT?.address
                     )
                 )?.toString();
-            return decimals == 18 ? rate
+            return referenceDecimals == 18 ? rate
                 : (
                     +rate * // rate
-                    +toWei(`1`, decimals) // token decimals
-                    / +toWei(`1`, 18) // default decimals
+                    +toWei(`1`, referenceDecimals || USDT?.decimals)
+                    / +toWei(`1`, 18) // default contract decimals
                 );
         } catch (e) {
             return
         };
-    },
-    /** Token Price (USD) */
-    getTokenUSDValue = async ({
-        chain,
-        tokenAddress,
-        weiAmount,
-        decimals = 18,
-    }: {
-        chain: ChainIds,
-        tokenAddress: EVMAddress,
-        weiAmount: string,
-        decimals?: number,
-    }) => await getTokenRate({
-        chain,
-        tokenAddress: getChainsData()[chain]?.USDT,
-        referenceAddress: tokenAddress,
-        weiAmount,
-        decimals
-    });
+    };
 
 export {
     getTokenLogo,
     getTokenData,
     tokenOnchainData,
     getTokenRate,
-    getTokenUSDValue,
 };

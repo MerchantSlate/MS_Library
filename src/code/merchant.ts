@@ -3,7 +3,7 @@ import { getChainsData } from "./config";
 import { ZERO_ADDRESS, errorResponse } from "./contract";
 import { fromWei, getContract } from "./methods";
 import { processNumbers } from "./showcase";
-import { getTokenUSDValue } from "./token";
+import { getTokenRate } from "./token";
 
 const
     /** Merchant Fee Value Text */
@@ -17,7 +17,7 @@ const
                 symbol = getChainsData()[chain]?.nativeCurrency?.symbol,
                 weiAmount = value?.toString(),
                 amount = fromWei(weiAmount || `0`, 18),
-                usdValue = await getTokenUSDValue({
+                usdValue = await getTokenRate({
                     chain,
                     tokenAddress: ZERO_ADDRESS,
                     weiAmount,

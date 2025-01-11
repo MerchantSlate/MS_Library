@@ -6,7 +6,7 @@ import { getPayments, loadPayments, payProduct, payValueText } from "./code/paym
 import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts, productFee, productFeeText, updateProduct } from "./code/products";
 import { processNumbers, timeAMPM, fullDateText, truncateText } from "./code/showcase";
 import { totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer } from "./code/stakes";
-import { getTokenUSDValue, getTokenData, getTokenRate, tokenOnchainData } from "./code/token";
+import { getTokenData, getTokenRate, tokenOnchainData } from "./code/token";
 import { BlockchainNetwork, ChainIds, EVMAddress, ErrorResponse, PaymentChain, PaymentData, PaymentDataAll, ProductChain, ProductData, ProductDataAll } from "./types";
 
 export {
@@ -36,7 +36,6 @@ export {
     getTokenData,
     tokenOnchainData,
     getTokenRate,
-    getTokenUSDValue,
 
     // merchant
     merchantFeeValueText,

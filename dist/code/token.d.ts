@@ -6,19 +6,12 @@ tokenOnchainData: (chain: ChainIds, tokenAddress: EVMAddress) => Promise<TokenDa
 getTokenLogo: (chain: ChainIds, tokenAddress: EVMAddress) => Promise<string | undefined>, 
 /** Token Data */
 getTokenData: (chain: ChainIds, tokenAddress: EVMAddress, skipLogo?: boolean) => Promise<TokenDataExtended | undefined>, 
-/** Token Rate */
-getTokenRate: ({ chain, tokenAddress, referenceAddress, weiAmount, decimals, }: {
-    chain: ChainIds;
-    tokenAddress: EVMAddress;
-    referenceAddress: EVMAddress;
-    weiAmount: string;
-    decimals: number;
-}) => Promise<string | number | undefined>, 
-/** Token Price (USD) */
-getTokenUSDValue: ({ chain, tokenAddress, weiAmount, decimals, }: {
+/** Token Rate (Default USDT) */
+getTokenRate: ({ chain, tokenAddress, weiAmount, referenceAddress, referenceDecimals, }: {
     chain: ChainIds;
     tokenAddress: EVMAddress;
     weiAmount: string;
-    decimals?: number;
+    referenceAddress?: EVMAddress;
+    referenceDecimals?: number;
 }) => Promise<string | number | undefined>;
-export { getTokenLogo, getTokenData, tokenOnchainData, getTokenRate, getTokenUSDValue, };
+export { getTokenLogo, getTokenData, tokenOnchainData, getTokenRate, };

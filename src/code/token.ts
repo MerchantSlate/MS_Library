@@ -138,14 +138,17 @@ const
                 USDT = getChainsData()[chain]?.USDT,
                 rate = (
                     await contract.tokenRate(
-                        tokenAddress,
+                        // optimism exception - wrapped ETH address
+                        chain == `OPTIMISM` && tokenAddress == ZERO_ADDRESS ?
+                            `0x4200000000000000000000000000000000000006`
+                            : tokenAddress,
                         weiAmount,
                         referenceAddress || USDT?.address
                     )
                 )?.toString(),
-                decimals = referenceDecimals || USDT?.decimals;
-            return decimals == 18 ? rate
-                : (+rate / +toWei(`1`, decimals));
+                decimals = chain == `BSC` ? 18 // BNB Smart Chain exception
+                    : (referenceDecimals || USDT?.decimals);
+            return +rate / +toWei(`1`, decimals)
         } catch (e) {
             return
         };

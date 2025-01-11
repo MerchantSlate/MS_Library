@@ -1,6 +1,7 @@
 {
     "ETH": {
         "deployed": false,
+        "USDT": "0xdac17f958d2ee523a2206206994597c13d831ec7",
         "chainId": "0x1",
         "chainName": "Ethereum Mainnet",
         "nativeCurrency": {
@@ -20,6 +21,7 @@
     },
     "BSC": {
         "deployed": true,
+        "USDT": "0x55d398326f99059ff775485246999027b3197955",
         "chainId": "0x38",
         "chainName": "Binance Smart Chain",
         "nativeCurrency": {
@@ -39,6 +41,7 @@
     },
     "POLYGON": {
         "deployed": true,
+        "USDT": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
         "chainId": "0x89",
         "chainName": "Polygon Mainnet",
         "nativeCurrency": {
@@ -58,6 +61,7 @@
     },
     "AVALANCHE": {
         "deployed": true,
+        "USDT": "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
         "chainId": "0xa86a",
         "chainName": "Avalanche C-Chain",
         "nativeCurrency": {
@@ -77,6 +81,7 @@
     },
     "FANTOM": {
         "deployed": true,
+        "USDT": "0x940F41F0ec9ba1A34CF001cc03347ac092F5F6B5",
         "chainId": "0xfa",
         "chainName": "Fantom Opera",
         "nativeCurrency": {
@@ -96,6 +101,7 @@
     },
     "ARBITRUM": {
         "deployed": true,
+        "USDT": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
         "chainId": "0xa4b1",
         "chainName": "Arbitrum One",
         "nativeCurrency": {
@@ -115,6 +121,7 @@
     },
     "OPTIMISM": {
         "deployed": true,
+        "USDT": "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
         "chainId": "0xa",
         "chainName": "Optimism",
         "nativeCurrency": {
@@ -134,6 +141,7 @@
     },
     "CELO": {
         "deployed": true,
+        "USDT": "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e",
         "chainId": "0xa4ec",
         "chainName": "Celo",
         "nativeCurrency": {

@@ -5,7 +5,7 @@ import { configLargeSuffix } from "./showcase";
 
 const
     /** Public RPCs obtained from https://chainlist.org/ and should only be used for testing */
-    chainsData: SupportedChainsData = chainsDataJSON,
+    chainsData = chainsDataJSON as SupportedChainsData,
     /** Get updated chains data */
     getChainsData = () => chainsData,
     /** Merchant Slate configuration */

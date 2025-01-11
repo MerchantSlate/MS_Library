@@ -15,7 +15,7 @@ Address `0xd680762e0E498aAfD200545307000eFf12e8E638`
 Install using `yarn add merchantslate` or `npm install merchantslate` 
 
 OR use in browsers through CDN
-`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.1.9/dist/merchant.min.js"></script>`
+`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.2.0/dist/merchant.min.js"></script>`
 
 Note: Public RPCs obtained from https://chainlist.org/ are used as default for development only and should be updated using `config`
 

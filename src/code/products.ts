@@ -4,7 +4,7 @@ import { ZERO_ADDRESS, errorResponse } from "./contract";
 import { getMerchantId } from "./merchant";
 import { fromWei, getContract, toWei } from "./methods";
 import { paginationData, processNumbers } from "./showcase";
-import { getTokenData } from "./token";
+import { getTokenUSDValue, getTokenData } from "./token";
 
 const
     /** Product Fee */
@@ -22,10 +22,22 @@ const
     productFeeText = async (
         chain: ChainIds,
     ): Promise<string | ErrorResponse | undefined> => {
-        const value = await productFee(chain);
-        if (typeof value != `string`) return value;
-        const symbol = getChainsData()[chain]?.nativeCurrency?.symbol;
-        return `${symbol} ${processNumbers(fromWei(value?.toString(), 18))}`;
+        try {
+            const value = await productFee(chain);
+            if (typeof value != `string`) return value;
+            const
+                symbol = getChainsData()[chain]?.nativeCurrency?.symbol,
+                weiAmount = value?.toString(),
+                amount = fromWei(weiAmount || `0`, 18),
+                usdValue = await getTokenUSDValue({
+                    chain,
+                    tokenAddress: ZERO_ADDRESS,
+                    weiAmount,
+                }) || 0;
+            return `${symbol} ${processNumbers(amount)} ~ $${processNumbers(usdValue)}`;
+        } catch (error: any) {
+            return errorResponse(error);
+        };
     },
     /** Add Product */
     addProduct = async ({

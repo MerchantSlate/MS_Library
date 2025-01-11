@@ -1,8 +1,9 @@
 import { ChainIds, ErrorResponse } from "../types";
 import { getChainsData } from "./config";
-import { errorResponse } from "./contract";
+import { ZERO_ADDRESS, errorResponse } from "./contract";
 import { fromWei, getContract } from "./methods";
 import { processNumbers } from "./showcase";
+import { getTokenUSDValue } from "./token";
 
 const
     /** Merchant Fee Value Text */
@@ -10,12 +11,18 @@ const
         chain: ChainIds,
     ): Promise<string | ErrorResponse | undefined> => {
         try {
+            const value = await merchantFee(chain);
+            if (typeof value != `string`) return value;
             const
-                chainsData = getChainsData(),
-                symbol = chainsData[chain]?.nativeCurrency?.symbol,
-                value = await merchantFee(chain);
-            if (typeof value == `string`)
-                return `${symbol} ${processNumbers(fromWei(value, 18))}`
+                symbol = getChainsData()[chain]?.nativeCurrency?.symbol,
+                weiAmount = value?.toString(),
+                amount = fromWei(weiAmount || `0`, 18),
+                usdValue = await getTokenUSDValue({
+                    chain,
+                    tokenAddress: ZERO_ADDRESS,
+                    weiAmount,
+                }) || 0;
+            return `${symbol} ${processNumbers(amount)} ~ $${processNumbers(usdValue)}`;
         } catch (error: any) {
             return errorResponse(error);
         };

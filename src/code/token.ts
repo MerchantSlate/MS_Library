@@ -142,12 +142,12 @@ const
                         weiAmount,
                         referenceAddress || USDT?.address
                     )
-                )?.toString();
-            return referenceDecimals == 18 ? rate
+                )?.toString(),
+                decimals = referenceDecimals || USDT?.decimals;
+            return decimals == 18 ? rate
                 : (
-                    +rate * // rate
-                    +toWei(`1`, referenceDecimals || USDT?.decimals)
-                    / +toWei(`1`, 18) // default contract decimals
+                    +rate / // rate
+                    +toWei(`1`, decimals - 1)
                 );
         } catch (e) {
             return

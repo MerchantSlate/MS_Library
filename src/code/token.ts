@@ -1,7 +1,7 @@
 import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataRaw } from "../types";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS } from "./contract";
-import { getContract } from "./methods";
+import { getContract, toWei } from "./methods";
 
 const
     /** Tokens Data Cache */
@@ -124,21 +124,30 @@ const
         tokenAddress,
         referenceAddress,
         weiAmount,
+        decimals = 18,
     }: {
         chain: ChainIds,
         tokenAddress: EVMAddress,
         referenceAddress: EVMAddress,
         weiAmount: string,
+        decimals: number,
     }) => {
         try {
-            const contract = await getContract(chain);
-            return (
-                await contract.tokenRate(
-                    tokenAddress,
-                    weiAmount,
-                    referenceAddress
-                )
-            )?.toString();
+            const
+                contract = await getContract(chain),
+                rate = (
+                    await contract.tokenRate(
+                        tokenAddress,
+                        weiAmount,
+                        referenceAddress
+                    )
+                )?.toString();
+            return decimals == 18 ? rate
+                : (
+                    +rate * // rate
+                    +toWei(`1`, decimals) // token decimals
+                    / +toWei(`1`, 18) // default decimals
+                );
         } catch (e) {
             return
         };
@@ -148,15 +157,18 @@ const
         chain,
         tokenAddress,
         weiAmount,
+        decimals = 18,
     }: {
         chain: ChainIds,
         tokenAddress: EVMAddress,
         weiAmount: string,
+        decimals?: number,
     }) => await getTokenRate({
         chain,
-        tokenAddress,
-        referenceAddress: getChainsData()[chain]?.USDT,
-        weiAmount
+        tokenAddress: getChainsData()[chain]?.USDT,
+        referenceAddress: tokenAddress,
+        weiAmount,
+        decimals
     });
 
 export {

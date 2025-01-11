@@ -145,10 +145,7 @@ const
                 )?.toString(),
                 decimals = referenceDecimals || USDT?.decimals;
             return decimals == 18 ? rate
-                : (
-                    +rate / // rate
-                    +toWei(`1`, decimals - 1)
-                );
+                : (+rate / +toWei(`1`, decimals));
         } catch (e) {
             return
         };

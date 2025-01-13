@@ -7,15 +7,15 @@ import { processNumbers } from "./showcase";
 import { getTokenRate } from "./token";
 
 const
-    /** merchantIds Cache */
-    merchantIds: {
+    /** merchantId Cache */
+    merchantIdCache: {
         [walletAddress: string]: {
             [chain: string]: string
         }
     } = (() => {
         try {
-            return localStorage.merchantIds ?
-                JSON.parse(localStorage.merchantIds)
+            return localStorage.merchantIdCache ?
+                JSON.parse(localStorage.merchantIdCache)
                 : {};
         } catch (e) {
             return {};
@@ -67,7 +67,7 @@ const
             const
                 contract = await getContract(chain, true),
                 address = await getWalletAddress(chain) || `0x`,
-                merchantIdCached = merchantIds[address][chain];
+                merchantIdCached = merchantIdCache[address]?.[chain];
 
             if (merchantIdCached) {
                 const data = merchantIdCached;
@@ -76,9 +76,9 @@ const
 
             const data = (await contract.getMerchantId())?.toString();
             if (typeof data != `string`) throw data
-            merchantIds[address] = merchantIds[address] || {};
-            merchantIds[address][chain] = data;
-            localStorage.merchantIds = JSON.stringify(merchantIds);
+            merchantIdCache[address] = merchantIdCache[address] || {};
+            merchantIdCache[address][chain] = data;
+            localStorage.merchantIdCache = JSON.stringify(merchantIdCache);
             return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);

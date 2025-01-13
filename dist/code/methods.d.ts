@@ -1,5 +1,5 @@
 import { BrowserProvider, JsonRpcProvider, InterfaceAbi } from "ethers";
-import { ChainIds, ContractFunctions, EVMAddress } from "../types";
+import { ChainIds, ContractFunctions, EVMAddress, ResultPromise } from "../types";
 declare const 
 /** Convert to Wei Values */
 toWei: (value: string, decimals?: number) => string, 
@@ -16,7 +16,7 @@ approve: ({ chain, address, value, }: {
     chain: ChainIds;
     address: EVMAddress;
     value: string;
-}) => Promise<any>, 
+}) => ResultPromise<string>, 
 /** Get wallet address */
 getWalletAddress: (chain: ChainIds) => Promise<EVMAddress | undefined>;
 export { toWei, fromWei, getBrowserWallet, getProvider, getContract, approve, getWalletAddress, };

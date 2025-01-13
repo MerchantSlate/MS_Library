@@ -1,17 +1,17 @@
-import { ChainIds, EVMAddress, ErrorResponse, Payment, PaymentDataAll, ProductChain } from "../types";
+import { ChainIds, EVMAddress, Payment, PaymentDataAll, ProductChain, ResultPromise } from "../types";
 declare const 
 /** Payment Value Text */
 payValueText: (chain: ChainIds, product: ProductChain, quantity?: string) => Promise<string | undefined>, 
 /** Pay Product */
-payProduct: (chain: ChainIds, product: ProductChain, quantity?: string) => Promise<{
+payProduct: (chain: ChainIds, product: ProductChain, quantity?: string) => ResultPromise<{
     hash?: string;
     paymentId?: string;
-} | ErrorResponse | undefined>, 
+}>, 
 /** Payments List */
 getPayments: (chain: ChainIds, pageNo: string, pageSize: string, merchantId?: string, connectedWallet?: EVMAddress) => Promise<{
-    payments: Payment[];
-    total: number;
-} | undefined>, 
+    payments?: Payment[];
+    total?: number;
+}>, 
 /** Payments List Processed */
 loadPayments: ({ chain, pageNo, pageSize, isMerchantOnly, buyerWallet, }: {
     chain: ChainIds;

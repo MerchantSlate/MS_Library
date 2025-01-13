@@ -1,14 +1,14 @@
-import { ChainIds, ErrorResponse } from "../types";
+import { ChainIds, ResultPromise } from "../types";
 declare const 
-/** Merchant Fee Value Text */
-merchantFeeValueText: (chain: ChainIds) => Promise<string | ErrorResponse | undefined>, 
 /** Merchant Fee */
-merchantFee: (chain: ChainIds) => Promise<string | ErrorResponse | undefined>, 
+merchantFee: (chain: ChainIds) => ResultPromise<string>, 
+/** Merchant Fee Value Text */
+merchantFeeValueText: (chain: ChainIds) => ResultPromise<string>, 
+/** Merchant Id */
+getMerchantId: (chain: ChainIds) => ResultPromise<string>, 
 /** Merchant Signup */
-merchantSignup: (chain: ChainIds) => Promise<{
+merchantSignup: (chain: ChainIds) => ResultPromise<{
     hash?: string;
     merchantId?: string;
-} | ErrorResponse | undefined>, 
-/** Merchant Id */
-getMerchantId: (chain: ChainIds) => Promise<string | ErrorResponse | undefined>;
-export { merchantFeeValueText, merchantFee, merchantSignup, getMerchantId, };
+}>;
+export { merchantFee, merchantFeeValueText, getMerchantId, merchantSignup, };

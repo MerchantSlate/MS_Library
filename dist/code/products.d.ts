@@ -1,22 +1,22 @@
-import { ChainIds, ErrorResponse, Product, ProductDataAll, ProductParams, ProductUpdateResponse } from "../types";
+import { ChainIds, Product, ProductDataAll, ProductParams, ProductUpdateResponse, ResultPromise } from "../types";
 declare const 
 /** Product Fee */
-productFee: (chain: ChainIds) => Promise<string | ErrorResponse | undefined>, 
+productFee: (chain: ChainIds) => ResultPromise<string>, 
 /** Product Fee Text */
-productFeeText: (chain: ChainIds) => Promise<string | ErrorResponse | undefined>, 
+productFeeText: (chain: ChainIds) => ResultPromise<string>, 
 /** Add Product */
-addProduct: ({ chain, productPrice, tokenAddress, quantity, commissionAddress, commissionPercentage, }: ProductParams) => Promise<ProductUpdateResponse | ErrorResponse | undefined>, 
+addProduct: ({ chain, productPrice, tokenAddress, quantity, commissionAddress, commissionPercentage, }: ProductParams) => ResultPromise<ProductUpdateResponse>, 
 /** Update Product */
-updateProduct: ({ chain, productId, productPrice, tokenAddress, quantity, commissionAddress, commissionPercentage, }: ProductParams) => Promise<ProductUpdateResponse | ErrorResponse | undefined>, 
+updateProduct: ({ chain, productId, productPrice, tokenAddress, quantity, commissionAddress, commissionPercentage, }: ProductParams) => ResultPromise<ProductUpdateResponse>, 
 /** Delete Product */
-deleteProduct: (chain: ChainIds, productId: string) => Promise<string | ErrorResponse | undefined>, 
+deleteProduct: (chain: ChainIds, productId: string) => ResultPromise<string>, 
 /** Products List */
 getProducts: (chain: ChainIds, pageNo: string, pageSize: string, merchantId?: string) => Promise<{
-    products: Product[];
-    total: number;
-} | undefined>, 
+    products?: Product[];
+    total?: number;
+}>, 
 /** Product Details */
-getProductDetails: (chain: ChainIds, productId: string) => Promise<Product | ErrorResponse | undefined>, 
+getProductDetails: (chain: ChainIds, productId: string) => ResultPromise<Product>, 
 /** Products List Processed */
 loadProducts: ({ chain, pageNo, pageSize, isMerchantOnly, }: {
     chain: ChainIds;

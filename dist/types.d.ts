@@ -1,3 +1,8 @@
+type Result<T> = {
+    success: true;
+    data: T;
+} | ErrorResponse;
+type ResultPromise<T> = Promise<Result<T>>;
 interface StringObj {
     [key: string]: string;
 }
@@ -253,11 +258,13 @@ interface ErrorCodes {
     ERROR_OUT_OF_STOCK: string;
     ERROR_APPROVE_MISSING: string;
     INSUFFICIENT_FUNDS?: string;
+    UNKNOWN_ERROR: string;
 }
 type ErrorCodeString = keyof ErrorCodes;
 interface ErrorResponse {
-    errorCode?: ErrorCodeString;
-    errorNote?: string;
+    success: false;
+    errorCode: ErrorCodeString;
+    errorNote: string;
 }
 interface ProductParams {
     productId?: string;
@@ -282,6 +289,8 @@ interface StakeOffers {
     [offerId: string]: StakeOffered;
 }
 export { 
+/** result promise */
+ResultPromise, 
 /** strings object */
 StringObj, 
 /** EVM address string */

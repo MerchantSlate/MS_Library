@@ -1,6 +1,17 @@
-import { ChainIds, EVMAddress, ErrorResponse, Product, ProductChain, ProductData, ProductDataAll, ProductParams, ProductRaw, ProductUpdateResponse, TransactionResponse } from "../types";
+import {
+    ChainIds,
+    EVMAddress,
+    Product,
+    ProductChain,
+    ProductData,
+    ProductDataAll,
+    ProductParams,
+    ProductRaw,
+    ProductUpdateResponse,
+    ResultPromise,
+} from "../types";
 import { getChainsData } from "./config";
-import { ZERO_ADDRESS, errorResponse } from "./contract";
+import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
 import { getMerchantId } from "./merchant";
 import { fromWei, getContract, toWei } from "./methods";
 import { paginationData, processNumbers } from "./showcase";
@@ -10,10 +21,13 @@ const
     /** Product Fee */
     productFee = async (
         chain: ChainIds
-    ): Promise<string | ErrorResponse | undefined> => {
+    ): ResultPromise<string> => {
         try {
-            const contract = await getContract(chain);
-            return (await contract.ProductFee())?.toString();
+            const
+                contract = await getContract(chain),
+                data = (await contract.ProductFee())?.toString();
+            if (typeof data != `string`) throw data;
+            return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -21,11 +35,13 @@ const
     /** Product Fee Text */
     productFeeText = async (
         chain: ChainIds,
-    ): Promise<string | ErrorResponse | undefined> => {
+    ): ResultPromise<string> => {
         try {
-            const value = await productFee(chain);
-            if (typeof value != `string`) return value;
+            const productFeeRes = await productFee(chain);
+            if (!productFeeRes?.success) return productFeeRes;
+
             const
+                value = productFeeRes?.data,
                 symbol = getChainsData()[chain]?.nativeCurrency?.symbol,
                 weiAmount = value?.toString(),
                 amount = fromWei(weiAmount || `0`, 18),
@@ -33,8 +49,9 @@ const
                     chain,
                     tokenAddress: ZERO_ADDRESS,
                     weiAmount,
-                }) || 0;
-            return `${symbol} ${processNumbers(amount)} ~ $${processNumbers(usdValue)}`;
+                }) || 0,
+                data = `${symbol} ${processNumbers(amount)} ~ $${processNumbers(usdValue)}`;
+            return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -47,18 +64,15 @@ const
         quantity,
         commissionAddress,
         commissionPercentage,
-    }: ProductParams): Promise<
-        ProductUpdateResponse
-        | ErrorResponse
-        | undefined
-    > => await updateProduct({
-        chain,
-        productPrice,
-        tokenAddress,
-        quantity,
-        commissionAddress,
-        commissionPercentage,
-    }),
+    }: ProductParams): ResultPromise<ProductUpdateResponse> =>
+        await updateProduct({
+            chain,
+            productPrice,
+            tokenAddress,
+            quantity,
+            commissionAddress,
+            commissionPercentage,
+        }),
     /** Update Product */
     updateProduct = async ({
         chain,
@@ -68,29 +82,25 @@ const
         quantity,
         commissionAddress,
         commissionPercentage,
-    }: ProductParams): Promise<
-        ProductUpdateResponse
-        | ErrorResponse
-        | undefined
-    > => {
-
-        if (!productPrice) return
-
+    }: ProductParams): ResultPromise<ProductUpdateResponse> => {
         try {
+            if (!productPrice) throw undefined
+
             const
                 contract = await getContract(chain, true),
-                value = await productFee(chain);
-            if (typeof value != `string`) return value;
+                productFeeRes = await productFee(chain);
+            if (!productFeeRes?.success) return productFeeRes;
 
             tokenAddress = tokenAddress?.startsWith(`0x`) ? tokenAddress : ZERO_ADDRESS;
 
             const
+                value = productFeeRes?.data,
                 token = await getTokenData(chain, tokenAddress, true),
                 price = toWei(productPrice, token?.decimals || 18),
                 commAdd = (commissionAddress?.startsWith(`0x`) ? commissionAddress : ZERO_ADDRESS) as EVMAddress,
                 commPer = commissionPercentage || `0`,
                 qty = quantity || `0`,
-                tx: TransactionResponse | undefined = productId ? await contract.updateProduct(
+                tx = productId ? await contract.updateProduct(
                     tokenAddress,
                     price,
                     commAdd,
@@ -105,20 +115,28 @@ const
                     qty,
                     { value }
                 ),
-                hash = (await tx?.wait())?.hash,
-                isNew = !+(productId || `0`);
+                hashRes = await processTxHash(tx);
+            if (!hashRes?.success) return hashRes;
+
+            // product id check
+            const isNew = !+(productId || `0`);
             if (isNew) {
-                const merchantId = await getMerchantId(chain);
-                if (typeof merchantId != `string`) return merchantId;
+                const merchantIdRes = await getMerchantId(chain);
+                if (!merchantIdRes?.success) return merchantIdRes;
+
                 const
+                    merchantId = merchantIdRes?.data,
                     products = (await getProducts(chain, `0`, `1`, merchantId))?.products,
                     productIdNew = products?.[0]?.id;
                 productId = productIdNew;
             };
+            if (!productId) throw productId;
 
-            if (hash && productId)
-                return { hash, productId, isNew }
-
+            // response
+            const
+                hash = hashRes?.data,
+                data = { isNew, productId, hash };
+            return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -127,14 +145,12 @@ const
     deleteProduct = async (
         chain: ChainIds,
         productId: string
-    ): Promise<string | ErrorResponse | undefined> => {
+    ): ResultPromise<string> => {
         try {
             const
                 contract = await getContract(chain, true),
-                tx: TransactionResponse =
-                    await contract.deleteProduct(productId),
-                hash = (await tx?.wait())?.hash;
-            return hash
+                tx = await contract.deleteProduct(productId);
+            return processTxHash(tx);
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -155,10 +171,7 @@ const
         pageNo: string,
         pageSize: string,
         merchantId: string = `0`
-    ): Promise<
-        { products: Product[], total: number }
-        | undefined
-    > => {
+    ): Promise<{ products?: Product[], total?: number }> => {
         try {
             const
                 products: Product[] = [],
@@ -174,23 +187,21 @@ const
                 products.push(productRawConvert(data[i]));
             return { products, total }
         } catch (error: any) {
-            return
+            return {}
         };
     },
     /** Product Details */
     getProductDetails = async (
         chain: ChainIds,
         productId: string
-    ): Promise<
-        Product
-        | ErrorResponse
-        | undefined
-    > => {
+    ): ResultPromise<Product> => {
         try {
-            const contract = await getContract(chain);
-            return productRawConvert(
-                await contract.productDetails(productId)
-            );
+            const
+                contract = await getContract(chain),
+                productRaw = await contract.productDetails(productId);
+            if (!productRaw?.[0]) throw productRaw
+            const data = productRawConvert(productRaw);
+            return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);
         };

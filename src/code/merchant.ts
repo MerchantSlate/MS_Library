@@ -1,62 +1,46 @@
-import { ChainIds, ErrorResponse } from "../types";
+import { hash } from "crypto";
+import { ChainIds, ResultPromise } from "../types";
 import { getChainsData } from "./config";
-import { ZERO_ADDRESS, errorResponse } from "./contract";
+import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
 import { fromWei, getContract } from "./methods";
 import { processNumbers } from "./showcase";
 import { getTokenRate } from "./token";
 
 const
+    /** Merchant Fee */
+    merchantFee = async (
+        chain: ChainIds,
+    ): ResultPromise<string> => {
+        try {
+            const
+                contract = await getContract(chain),
+                data = (await contract.MerchantFee())?.toString();
+            if (typeof data != `string`) throw data;
+            return { success: true, data };
+        } catch (error: any) {
+            return errorResponse(error);
+        };
+    },
     /** Merchant Fee Value Text */
     merchantFeeValueText = async (
         chain: ChainIds,
-    ): Promise<string | ErrorResponse | undefined> => {
+    ): ResultPromise<string> => {
         try {
-            const value = await merchantFee(chain);
-            if (typeof value != `string`) return value;
+            const merchantFeeRes = await merchantFee(chain);
+            if (!merchantFeeRes?.success) return merchantFeeRes;
+
             const
                 symbol = getChainsData()[chain]?.nativeCurrency?.symbol,
+                value = merchantFeeRes.data,
                 weiAmount = value?.toString(),
                 amount = fromWei(weiAmount || `0`, 18),
                 usdValue = await getTokenRate({
                     chain,
                     tokenAddress: ZERO_ADDRESS,
                     weiAmount,
-                }) || 0;
-            return `${symbol} ${processNumbers(amount)} ~ $${processNumbers(usdValue)}`;
-        } catch (error: any) {
-            return errorResponse(error);
-        };
-    },
-    /** Merchant Fee */
-    merchantFee = async (
-        chain: ChainIds,
-    ): Promise<string | ErrorResponse | undefined> => {
-        try {
-            const contract = await getContract(chain)
-            return (await contract.MerchantFee())?.toString();
-        } catch (error: any) {
-            return errorResponse(error);
-        };
-    },
-    /** Merchant Signup */
-    merchantSignup = async (
-        chain: ChainIds,
-    ): Promise<
-        { hash?: string, merchantId?: string }
-        | ErrorResponse
-        | undefined
-    > => {
-        try {
-            const
-                contract = await getContract(chain, true),
-                value = await merchantFee(chain);
-            if (typeof value != `string`) return value;
-            const
-                tx = await contract.merchantSignup({ value }),
-                hash = (await tx?.wait())?.hash,
-                merchantId = await getMerchantId(chain);
-            if (typeof merchantId != `string`) return merchantId
-            return { hash, merchantId }
+                }) || 0,
+                data = `${symbol} ${processNumbers(amount)} ~ $${processNumbers(usdValue)}`;
+            return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -64,24 +48,53 @@ const
     /** Merchant Id */
     getMerchantId = async (
         chain: ChainIds
-    ): Promise<
-        string
-        | ErrorResponse
-        | undefined
-    > => {
+    ): ResultPromise<string> => {
         try {
             const
                 contract = await getContract(chain, true),
-                merchantId = (await contract.getMerchantId())?.toString();
-            return merchantId;
+                data = (await contract.getMerchantId())?.toString();
+            if (typeof data != `string`) throw data
+            return { success: true, data };
+        } catch (error: any) {
+            return errorResponse(error);
+        };
+    },
+    /** Merchant Signup */
+    merchantSignup = async (
+        chain: ChainIds,
+    ): ResultPromise<{ hash?: string, merchantId?: string }> => {
+        try {
+
+            // merchant fee
+            const
+                contract = await getContract(chain, true),
+                merchantFeeRes = await merchantFee(chain);
+            if (!merchantFeeRes?.success) return merchantFeeRes;
+
+            // signup process
+            const
+                value = merchantFeeRes.data,
+                tx = await contract.merchantSignup({ value }),
+                hashRes = await processTxHash(tx);
+            if (!hashRes?.success) return hashRes;
+
+            // merchant id
+            const merchantIdRes = await getMerchantId(chain);
+            if (!merchantIdRes?.success) return merchantIdRes;
+
+            const
+                hash = hashRes.data,
+                merchantId = merchantIdRes.data,
+                data = { hash, merchantId }
+            return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);
         };
     };
 
 export {
-    merchantFeeValueText,
     merchantFee,
-    merchantSignup,
+    merchantFeeValueText,
     getMerchantId,
+    merchantSignup,
 };

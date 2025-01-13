@@ -1,15 +1,23 @@
-import { ChainIds, EVMAddress, ErrorResponse, StakeOffers } from "../types";
-import { errorResponse } from "./contract";
+import {
+    ChainIds,
+    EVMAddress,
+    ResultPromise,
+    StakeOffers,
+} from "../types";
+import { errorResponse, processTxHash } from "./contract";
 import { getContract } from "./methods";
 
 const
     /** Total Stakes */
     totalStakes = async (
         chain: ChainIds,
-    ): Promise<number | ErrorResponse> => {
+    ): ResultPromise<number> => {
         try {
-            const contract = await getContract(chain);
-            return +(await contract.TotalStakes())?.toString();
+            const
+                contract = await getContract(chain),
+                data = +(await contract.TotalStakes())?.toString();
+            if (!data) throw data
+            return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -17,20 +25,15 @@ const
     /** wallet stake count */
     stakesCount = async (
         chain: ChainIds,
-    ): Promise<{
-        holdings: number,
-        offered: number
-    } | ErrorResponse> => {
+    ): ResultPromise<{ holdings: number, offered: number }> => {
         try {
             const
                 contract = await getContract(chain, true),
-                data = await contract.stakesCount(),
-                holdings = +data?.[0]?.toString(),
-                offered = +data?.[1]?.toString();
-            return {
-                holdings,
-                offered
-            };
+                raw = await contract.stakesCount(),
+                holdings = +raw?.[0]?.toString(),
+                offered = +raw?.[1]?.toString(),
+                data = { holdings, offered };
+            return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -40,13 +43,12 @@ const
         chain: ChainIds,
         stakeUnits: string,
         recipientAddress: EVMAddress,
-    ): Promise<string | ErrorResponse | undefined> => {
+    ): ResultPromise<string> => {
         try {
             const
                 contract = await getContract(chain, true),
-                tx = await contract.transferStake(stakeUnits, recipientAddress),
-                hash = (await tx?.wait())?.hash;
-            return hash
+                tx = await contract.transferStake(stakeUnits, recipientAddress);
+            return processTxHash(tx);
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -56,13 +58,12 @@ const
         chain: ChainIds,
         stakeUnits: string,
         totalValueWei: string,
-    ): Promise<string | ErrorResponse | undefined> => {
+    ): ResultPromise<string> => {
         try {
             const
                 contract = await getContract(chain, true),
-                tx = await contract.offerStake(stakeUnits, totalValueWei),
-                hash = (await tx?.wait())?.hash;
-            return hash
+                tx = await contract.offerStake(stakeUnits, totalValueWei);
+            return processTxHash(tx);
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -107,18 +108,21 @@ const
     removeStakeOffer = async (
         chain: ChainIds,
         offerId: string,
-    ): Promise<string | ErrorResponse | undefined> => {
+    ): ResultPromise<string> => {
         try {
+
+            // check offer
             const
-                list = (await stakesOffered(chain))?.listedStakes,
+                res = await stakesOffered(chain),
+                list = res?.listedStakes,
                 isOffered = list?.[offerId];
-            if (isOffered) {
-                const
-                    contract = await getContract(chain, true),
-                    tx = await contract.removeStakeOffer(offerId),
-                    hash = (await tx?.wait())?.hash;
-                return hash
-            };
+            if (!isOffered) throw isOffered
+
+            // remove offer
+            const
+                contract = await getContract(chain, true),
+                tx = await contract.removeStakeOffer(offerId);
+            return processTxHash(tx);
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -127,21 +131,23 @@ const
     takeStake = async (
         chain: ChainIds,
         offerId: string,
-    ): Promise<string | ErrorResponse | undefined> => {
+    ): ResultPromise<string> => {
         try {
+
+            // check offer
             const
                 contract = await getContract(chain, true),
-                list = (await stakesOffered(chain))?.listedStakes,
+                res = await stakesOffered(chain),
+                list = res?.listedStakes,
                 value = list?.[offerId]?.offerValue;
-            if (value) {
-                const
-                    tx = await contract.takeStake(
-                        offerId,
-                        { value }
-                    ),
-                    hash = (await tx?.wait())?.hash;
-                return hash
-            };
+            if (!value) throw res
+
+            // take offer
+            const tx = await contract.takeStake(
+                offerId,
+                { value }
+            );
+            return processTxHash(tx);
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -153,6 +159,6 @@ export {
     transferStake,
     offerStake,
     stakesOffered,
-    takeStake,
     removeStakeOffer,
+    takeStake,
 }

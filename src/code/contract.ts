@@ -1,5 +1,12 @@
 import { ZeroAddress } from "ethers";
-import { EVMAddress, ErrorCodeString, ErrorResponse, StringObj } from "../types";
+import {
+    EVMAddress,
+    ErrorCodeString,
+    ErrorResponse,
+    ResultPromise,
+    StringObj,
+    TransactionResponse
+} from "../types";
 
 const
     /** Zero Address */
@@ -12,17 +19,34 @@ const
         ERROR_INVALID_INPUTS: `The inputs provided are invalid. Please review and correct them.`,
         ERROR_LOW_FUNDS: `Insufficient funds. Please top up your balance and try again.`,
         ERROR_OUT_OF_STOCK: `The requested item is out of stock. Please select a different quantity or product.`,
-        ERROR_APPROVE_MISSING: `Approval is required before proceeding with this operation.`
+        ERROR_APPROVE_MISSING: `Approval is required before proceeding with this operation.`,
+        UNKNOWN_ERROR: `Unknown error occurred. Please try again later.`,
     },
     rpcErrors: StringObj = {
         INSUFFICIENT_FUNDS: contractErrors[`ERROR_LOW_FUNDS`],
     },
+    /** Process Transaction Hash */
+    processTxHash = async (tx: TransactionResponse): ResultPromise<string> => {
+        try {
+            const data = (await tx?.wait())?.hash;
+            if (typeof data != `string`) throw data
+            return { success: true, data }
+        } catch (error: any) {
+            return errorResponse(error);
+        };
+    },
     /** Contract Error Response Processing */
     errorResponse = (error: any): ErrorResponse => {
         const
-            errorCode: ErrorCodeString | undefined = error?.reason || error?.code,
-            errorNote: string | undefined = contractErrors[error?.reason] || rpcErrors[error?.code];
+            defaultError = `UNKNOWN_ERROR`,
+            errorCode: ErrorCodeString = error?.reason
+                || error?.code
+                || defaultError,
+            errorNote: string = contractErrors[error?.reason]
+                || rpcErrors[error?.code]
+                || contractErrors[defaultError];
         return {
+            success: false,
             errorCode,
             errorNote,
         }
@@ -31,5 +55,6 @@ const
 export {
     ZERO_ADDRESS,
     contractErrors,
+    processTxHash,
     errorResponse,
 };

@@ -9,7 +9,13 @@ import {
 import contractABI from "../data/contract_abi.json";
 import approveABI from "../data/approve_abi.json";
 import { config, getChainsData, getConfig } from "./config";
-import { ChainIds, ContractFunctions, EVMAddress } from "../types";
+import {
+    ChainIds,
+    ContractFunctions,
+    EVMAddress,
+    ResultPromise
+} from "../types";
+import { errorResponse, processTxHash } from "./contract";
 
 const
     /** Get BigNumbers */
@@ -149,7 +155,7 @@ const
         chain: ChainIds,
         address: EVMAddress,
         value: string,
-    }) => {
+    }): ResultPromise<string> => {
         try {
             const
                 { merchantSlateContract } = getConfig(),
@@ -168,19 +174,19 @@ const
                         walletAddress,
                         merchantSlateContract,
                     )
-                )?.toString(),
+                )?.toString();
+            if (+allowance >= +value)
+                return { success: true, data: `` }
 
-                // approve amount
-                tx = +allowance < +value ? await tokenContract // @ts-ignore
-                    ?.approve(
-                        merchantSlateContract,
-                        value
-                    ) : undefined,
-                hash = (await tx?.wait())?.hash;
-
-            return hash
+            // approve amount
+            const tx = await tokenContract // @ts-ignore
+                ?.approve(
+                    merchantSlateContract,
+                    value
+                );
+            return processTxHash(tx);
         } catch (error) {
-            console.log(`Approve Error`, error);
+            return errorResponse(error);
         };
     },
     /** Get wallet address */

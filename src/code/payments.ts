@@ -2,20 +2,25 @@ import { toBigInt } from "ethers";
 import {
     ChainIds,
     EVMAddress,
-    ErrorResponse,
     Payment,
     PaymentChain,
     PaymentData,
     PaymentDataAll,
     PaymentRaw,
     ProductChain,
-    TransactionResponse
+    ResultPromise,
 } from "../types";
 import { getChainsData } from "./config";
-import { ZERO_ADDRESS, errorResponse } from "./contract";
+import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
 import { getMerchantId } from "./merchant";
 import { approve, fromWei, getContract, getWalletAddress } from "./methods";
-import { fullDateText, paginationData, processNumbers, timeAMPM, truncateText } from "./showcase";
+import {
+    fullDateText,
+    paginationData,
+    processNumbers,
+    timeAMPM,
+    truncateText,
+} from "./showcase";
 import { getTokenData } from "./token";
 
 const
@@ -37,7 +42,7 @@ const
         const
             walletAddress = await getWalletAddress(chain),
             data = await getPayments(chain, `0`, `1`, `0`, walletAddress),
-            payment = data?.payments[0];
+            payment = data?.payments?.[0];
         return payment?.id
     },
     /** Pay Product */
@@ -45,35 +50,40 @@ const
         chain: ChainIds,
         product: ProductChain,
         quantity: string = `1`,
-    ): Promise<
-        { hash?: string, paymentId?: string }
-        | ErrorResponse
-        | undefined
-    > => {
+    ): ResultPromise<{ hash?: string, paymentId?: string }> => {
         try {
             const
                 productId = product.id,
                 contract = await getContract(chain, true),
                 value = (toBigInt(product.amount) * toBigInt(quantity))?.toString(),
                 token = await getTokenData(chain, product?.token, true),
-                tokenAddress = token?.address,
-                isNative = tokenAddress == ZERO_ADDRESS,
-                approveRequired = !isNative && tokenAddress,
-                approveFirst = approveRequired ? await approve({
+                tokenAddress = token?.address || ZERO_ADDRESS,
+                isNative = tokenAddress == ZERO_ADDRESS;
+
+            // approve check
+            if (!isNative) {
+                const approveFirst = await approve({
                     chain,
                     address: tokenAddress,
                     value
-                }) : undefined,
-                tx: TransactionResponse = approveRequired ?
-                    await contract.payProduct(productId, quantity)
-                    : await contract.payProduct(
-                        productId,
-                        quantity,
-                        { value }
-                    ),
-                hash = (await tx?.wait())?.hash,
-                paymentId = await lastPaymentId(chain);
-            return { hash, paymentId }
+                });
+                if (!approveFirst?.success) return approveFirst
+            };
+
+            const tx = isNative ?
+                await contract.payProduct(
+                    productId,
+                    quantity,
+                    { value }
+                ) : await contract.payProduct(productId, quantity),
+                hashRes = await processTxHash(tx);
+            if (!hashRes?.success) return hashRes;
+
+            const
+                hash = hashRes?.data,
+                paymentId = await lastPaymentId(chain),
+                data = { hash, paymentId };
+            return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);
         };
@@ -99,10 +109,7 @@ const
         pageSize: string,
         merchantId: string = `0`,
         connectedWallet?: EVMAddress,
-    ): Promise<{
-        payments: Payment[],
-        total: number,
-    } | undefined> => {
+    ): Promise<{ payments?: Payment[], total?: number, }> => {
         try {
             const
                 contract = await getContract(chain),
@@ -119,7 +126,7 @@ const
                 payments.push(paymentRawConvert(list[i]));
             return { payments, total };
         } catch (error: any) {
-            return
+            return {};
         };
     },
     /** Payments List Processed */

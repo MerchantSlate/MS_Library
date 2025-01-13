@@ -62,12 +62,12 @@ const
 
             // approve check
             if (!isNative) {
-                const approveFirst = await approve({
+                const approved = await approve({
                     chain,
                     address: tokenAddress,
                     value
                 });
-                if (!approveFirst?.success) return approveFirst
+                if (!approved?.success) return approved
             };
 
             const tx = isNative ?
@@ -184,8 +184,9 @@ const
                     paidFee: `${tokenData?.symbol} ${processNumbers(fromWei(fees?.toFixed(0), tokenData?.decimals || 18))}`,
                 }
             },
-            merchantId = isMerchantOnly ? await getMerchantId(chain) : `0`,
-            allData = typeof merchantId != `string` ? undefined
+            merchantIdRes = isMerchantOnly ? await getMerchantId(chain) : undefined,
+            merchantId = merchantIdRes?.success ? merchantIdRes?.data : `0`,
+            allData = isMerchantOnly && (!merchantId || merchantId == `0`) ? undefined
                 : await getPayments(
                     chain,
                     pageNo,

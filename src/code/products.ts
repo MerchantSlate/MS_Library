@@ -247,8 +247,9 @@ const
                     productQuantity: product.qtyCap ? processNumbers(+product.qty) : `UNLIMITED`,
                 }
             },
-            merchantId = isMerchantOnly ? await getMerchantId(chain) : `0`,
-            allData = typeof merchantId != `string` ? undefined
+            merchantIdRes = isMerchantOnly ? await getMerchantId(chain) : undefined,
+            merchantId = merchantIdRes?.success ? merchantIdRes?.data : `0`,
+            allData = isMerchantOnly && (!merchantId || merchantId == `0`) ? undefined
                 : await getProducts(chain, pageNo, pageSize, merchantId),
             list = allData?.products || [],
             products: ProductChain[] = [],

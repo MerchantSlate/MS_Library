@@ -2,11 +2,25 @@ import { hash } from "crypto";
 import { ChainIds, ResultPromise } from "../types";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
-import { fromWei, getContract } from "./methods";
+import { fromWei, getContract, getWalletAddress } from "./methods";
 import { processNumbers } from "./showcase";
 import { getTokenRate } from "./token";
 
 const
+    /** merchantIds Cache */
+    merchantIds: {
+        [walletAddress: string]: {
+            [chain: string]: string
+        }
+    } = (() => {
+        try {
+            return localStorage.merchantIds ?
+                JSON.parse(localStorage.merchantIds)
+                : {};
+        } catch (e) {
+            return {};
+        };
+    })(),
     /** Merchant Fee */
     merchantFee = async (
         chain: ChainIds,
@@ -52,8 +66,19 @@ const
         try {
             const
                 contract = await getContract(chain, true),
-                data = (await contract.getMerchantId())?.toString();
+                address = await getWalletAddress(chain) || `0x`,
+                merchantIdCached = merchantIds[address][chain];
+
+            if (merchantIdCached) {
+                const data = merchantIdCached;
+                return { success: true, data };
+            };
+
+            const data = (await contract.getMerchantId())?.toString();
             if (typeof data != `string`) throw data
+            merchantIds[address] = merchantIds[address] || {};
+            merchantIds[address][chain] = data;
+            localStorage.merchantIds = JSON.stringify(merchantIds);
             return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);

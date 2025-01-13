@@ -165,8 +165,7 @@ const
                     address,
                     approveABI
                 ),
-                signer = await getSigner(chain, true),
-                walletAddress = await signer?.getAddress(),
+                walletAddress = await getWalletAddress(chain),
 
                 // allowance check
                 allowance = (await tokenContract // @ts-ignore

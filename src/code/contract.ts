@@ -1,5 +1,6 @@
 import { ZeroAddress } from "ethers";
 import {
+    ChainIds,
     EVMAddress,
     ErrorCodeString,
     ErrorResponse,
@@ -9,6 +10,13 @@ import {
 } from "../types";
 
 const
+    /** Selected Chain */
+    selectedChain: ChainIds = (() =>
+        localStorage.selectedChain || `POLYGON`
+    )(),
+    setSelectedChain = (
+        chain: ChainIds,
+    ) => localStorage.selectedChain = chain,
     /** Zero Address */
     ZERO_ADDRESS = ZeroAddress as EVMAddress,
     /** Contract Messages */
@@ -53,6 +61,8 @@ const
     };
 
 export {
+    selectedChain,
+    setSelectedChain,
     ZERO_ADDRESS,
     contractErrors,
     processTxHash,

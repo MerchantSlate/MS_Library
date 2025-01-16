@@ -1,5 +1,5 @@
 import { config, getChainsData, getConfig } from "./code/config";
-import { ZERO_ADDRESS, contractErrors } from "./code/contract";
+import { ZERO_ADDRESS, contractErrors, selectedChain, setSelectedChain } from "./code/contract";
 import { merchantFee, merchantSignup, getMerchantId, merchantFeeValueText } from "./code/merchant";
 import { fromWei, getBrowserWallet, getContract, getProvider, getWalletAddress, toWei } from "./code/methods";
 import { getPayments, loadPayments, payProduct, payValueText } from "./code/payments";
@@ -16,14 +16,16 @@ export {
     config,
     BlockchainNetwork,
     ChainIds,
-    
+
     // contract address
+    selectedChain,
+    setSelectedChain,
     ZERO_ADDRESS,
     contractErrors,
     ErrorResponse,
     EVMAddress,
     truncateText,
-    
+
     // methods
     toWei,
     fromWei,

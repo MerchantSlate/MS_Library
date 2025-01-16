@@ -52,7 +52,11 @@ const
                 || defaultError,
             errorNote: string = contractErrors[error?.reason]
                 || rpcErrors[error?.code]
-                || contractErrors[defaultError];
+                || (
+                    errorCode?.toLowerCase()?.includes(`exceeds balance`) ?
+                        rpcErrors.INSUFFICIENT_FUNDS
+                        : contractErrors[defaultError]
+                );
         return {
             success: false,
             errorCode,

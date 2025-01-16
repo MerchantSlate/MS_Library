@@ -1,5 +1,7 @@
-import { EVMAddress, ErrorResponse, ResultPromise, StringObj, TransactionResponse } from "../types";
+import { ChainIds, EVMAddress, ErrorResponse, ResultPromise, StringObj, TransactionResponse } from "../types";
 declare const 
+/** Selected Chain */
+selectedChain: ChainIds, setSelectedChain: (chain: ChainIds) => keyof import("../types").SupportedChainsData, 
 /** Zero Address */
 ZERO_ADDRESS: EVMAddress, 
 /** Contract Messages */
@@ -8,4 +10,4 @@ contractErrors: StringObj,
 processTxHash: (tx: TransactionResponse) => ResultPromise<string>, 
 /** Contract Error Response Processing */
 errorResponse: (error: any) => ErrorResponse;
-export { ZERO_ADDRESS, contractErrors, processTxHash, errorResponse, };
+export { selectedChain, setSelectedChain, ZERO_ADDRESS, contractErrors, processTxHash, errorResponse, };

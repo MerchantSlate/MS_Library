@@ -21,16 +21,26 @@ const
     /** Get BigNumbers */
     decimalFactor = (decimals: number) =>
         10n ** toBigInt(decimals),
+    /** Integer Number string */
+    integerString = (
+        value: number,
+    ) => {
+        try {
+            return BigInt(value)?.toString()
+        } catch (e) {
+            return value?.toString()
+        };
+    },
     /** Convert to Wei Values */
     toWei = (
         value: string,
         decimals: number = 18,
-    ): string => toBigInt(
-        (
+    ): string => integerString(
+        +(
             +value *
             +decimalFactor(decimals)?.toString()
         )?.toFixed(0)
-    )?.toString(),
+    ),
     /** Convert from Wei Values */
     fromWei = (
         value: string,
@@ -199,6 +209,7 @@ const
     };
 
 export {
+    integerString,
     toWei,
     fromWei,
     getBrowserWallet,

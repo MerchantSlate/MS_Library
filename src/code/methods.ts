@@ -25,10 +25,12 @@ const
     toWei = (
         value: string,
         decimals: number = 18,
-    ): string => (
-        +value *
-        +decimalFactor(decimals)?.toString()
-    )?.toFixed(0),
+    ): string => toBigInt(
+        (
+            +value *
+            +decimalFactor(decimals)?.toString()
+        )?.toFixed(0)
+    )?.toString(),
     /** Convert from Wei Values */
     fromWei = (
         value: string,

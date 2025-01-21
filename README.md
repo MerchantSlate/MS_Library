@@ -9,7 +9,7 @@ Install using `yarn add merchantslate` or `npm install merchantslate`
 
 OR use in browsers through CDN
 
-`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.3.4/dist/merchant.min.js"></script>`
+`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.3.5/dist/merchant.min.js"></script>`
 
 Note: Public RPCs obtained from https://chainlist.org/ are used as default for development only and should be updated using `config`
 

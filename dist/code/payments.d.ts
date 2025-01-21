@@ -8,7 +8,11 @@ payProduct: (chain: ChainIds, product: ProductChain, quantity?: string) => Resul
     paymentId?: string;
 }>, 
 /** Pay product transactions */
-payTxs: (chain: ChainIds, productId: string, quantity?: string) => ResultPromise<PayTxsData>, 
+payTxs: (chain: ChainIds, productId: string, quantity?: string) => ResultPromise<PayTxsData>, payValidation: ({ chain, productId, walletAddress, }: {
+    chain: ChainIds;
+    productId: string;
+    walletAddress: EVMAddress;
+}) => ResultPromise<string>, 
 /** Payments List */
 getPayments: (chain: ChainIds, pageNo: string, pageSize: string, merchantId?: string, connectedWallet?: EVMAddress) => Promise<{
     payments?: Payment[];
@@ -22,4 +26,4 @@ loadPayments: ({ chain, pageNo, pageSize, isMerchantOnly, buyerWallet, }: {
     isMerchantOnly?: boolean;
     buyerWallet?: EVMAddress;
 }) => Promise<PaymentDataAll>;
-export { payValueText, payProduct, payTxs, getPayments, loadPayments, };
+export { payValueText, payProduct, payTxs, payValidation, getPayments, loadPayments, };

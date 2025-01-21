@@ -150,6 +150,52 @@ const
             return errorResponse(error);
         };
     },
+    payValidation = async ({
+        chain,
+        productId,
+        walletAddress,
+    }: {
+        chain: ChainIds,
+        productId: string,
+        walletAddress: EVMAddress,
+    }): ResultPromise<string> => {
+        try {
+            const
+                allData = await Promise.all([
+                    getProductDetails(
+                        chain,
+                        productId
+                    ),
+                    getPayments(
+                        chain,
+                        `0`,
+                        `1`,
+                        `0`,
+                        walletAddress
+                    )
+                ]),
+                requiredRes = allData[0];
+            if (!requiredRes?.success) return requiredRes;
+
+            const
+                paymentsData = allData[1],
+                product = requiredRes?.data?.product,
+                amount = product?.amount,
+                token = product?.token,
+                payments = paymentsData?.payments || [],
+                lastPayment = payments[0],
+                tokenValid = lastPayment?.token?.toLowerCase()
+                    == token?.toLowerCase(),
+                amountValid = lastPayment?.amount == amount
+                    || +lastPayment?.amount >= +amount,
+                data = lastPayment?.id;
+            return tokenValid && amountValid ?
+                { success: true, data }
+                : errorResponse(undefined);
+        } catch (error: any) {
+            return errorResponse(error);
+        };
+    },
     /** Payment Data Convert */
     paymentRawConvert = (paymentRaw: PaymentRaw): Payment => {
         return {
@@ -284,6 +330,7 @@ export {
     payValueText,
     payProduct,
     payTxs,
+    payValidation,
     getPayments,
     loadPayments,
 }

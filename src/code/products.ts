@@ -5,17 +5,19 @@ import {
     ProductChain,
     ProductData,
     ProductDataAll,
+    ProductExtended,
     ProductParams,
     ProductRaw,
     ProductUpdateResponse,
     ResultPromise,
+    TokenData,
 } from "../types";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
 import { getMerchantId } from "./merchant";
 import { fromWei, getContract, toWei } from "./methods";
 import { paginationData, processNumbers } from "./showcase";
-import { getTokenData, getTokenRate } from "./token";
+import { getTokenData, getTokenRate, tokenOnchainData } from "./token";
 
 const
     /** Product Fee */
@@ -194,13 +196,27 @@ const
     getProductDetails = async (
         chain: ChainIds,
         productId: string
-    ): ResultPromise<Product> => {
+    ): ResultPromise<ProductExtended> => {
         try {
             const
                 contract = await getContract(chain),
                 productRaw = await contract.productDetails(productId);
             if (!productRaw?.[0]) throw productRaw
-            const data = productRawConvert(productRaw);
+            const
+                product = productRawConvert(productRaw),
+                tokenAddress = product.token,
+                weiAmount = product.amount,
+                allData = await Promise.all([
+                    tokenOnchainData(chain, tokenAddress),
+                    getTokenRate({ chain, tokenAddress, weiAmount })
+                ]),
+                token = allData[0] || {} as TokenData,
+                usdValue = allData[1] || 0,
+                data = {
+                    product,
+                    token,
+                    usdValue,
+                };
             return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);

@@ -112,6 +112,11 @@ interface Product {
     qty: string;
     qtyCap: boolean;
 }
+interface ProductExtended {
+    product: Product;
+    token: TokenData;
+    usdValue: number;
+}
 interface ProductRaw {
     /** id */
     0: bigint;
@@ -329,6 +334,8 @@ ProductUpdateResponse,
 ProductRaw, 
 /** product data */
 Product, 
+/** product data (extended) */
+ProductExtended, 
 /** product data + chain type */
 ProductChain, 
 /** product data presentation */

@@ -1,4 +1,4 @@
-import { ChainIds, Product, ProductDataAll, ProductParams, ProductUpdateResponse, ResultPromise } from "../types";
+import { ChainIds, Product, ProductDataAll, ProductExtended, ProductParams, ProductUpdateResponse, ResultPromise } from "../types";
 declare const 
 /** Product Fee */
 productFee: (chain: ChainIds) => ResultPromise<string>, 
@@ -16,7 +16,7 @@ getProducts: (chain: ChainIds, pageNo: string, pageSize: string, merchantId?: st
     total?: number;
 }>, 
 /** Product Details */
-getProductDetails: (chain: ChainIds, productId: string) => ResultPromise<Product>, 
+getProductDetails: (chain: ChainIds, productId: string) => ResultPromise<ProductExtended>, 
 /** Products List Processed */
 loadProducts: ({ chain, pageNo, pageSize, isMerchantOnly, }: {
     chain: ChainIds;

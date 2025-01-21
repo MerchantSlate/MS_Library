@@ -1,4 +1,4 @@
-import { BrowserProvider, JsonRpcProvider, InterfaceAbi, Contract } from "ethers";
+import { BrowserProvider, JsonRpcProvider, InterfaceAbi } from "ethers";
 import { ChainIds, ContractFunctions, EVMAddress, ResultPromise } from "../types";
 declare const 
 /** Integer Number string */
@@ -13,8 +13,6 @@ getBrowserWallet: () => any,
 getProvider: (chain: ChainIds, wallet?: boolean) => Promise<BrowserProvider | JsonRpcProvider>, 
 /** wallet contract */
 getContract: (chain: ChainIds, wallet?: boolean, address?: string, abi?: InterfaceAbi) => Promise<ContractFunctions>, 
-/** contract (unsigned) */
-getContractUnsigned: (address?: string, abi?: InterfaceAbi) => Contract, 
 /** Approve Token Transfers */
 approve: ({ chain, address, value, }: {
     chain: ChainIds;
@@ -23,4 +21,4 @@ approve: ({ chain, address, value, }: {
 }) => ResultPromise<string>, 
 /** Get wallet address */
 getWalletAddress: (chain: ChainIds) => Promise<EVMAddress | undefined>;
-export { integerString, toWei, fromWei, getBrowserWallet, getProvider, getContract, getContractUnsigned, approve, getWalletAddress, };
+export { integerString, toWei, fromWei, getBrowserWallet, getProvider, getContract, approve, getWalletAddress, };

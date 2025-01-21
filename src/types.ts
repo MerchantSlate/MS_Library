@@ -161,6 +161,19 @@ interface PaymentDataAll extends PaginationData {
     paymentsData: PaymentData[]
 }
 
+interface TxObj {
+    to: string,
+    data: string,
+    value?: string,
+}
+
+interface PayTxsData {
+    chainId: string,
+    token: TokenData,
+    amount: string,
+    txs: TxObj[]
+}
+
 interface Product {
     id: string;
     token: EVMAddress;
@@ -411,6 +424,10 @@ export {
     PaymentData,
     /** payment data with pagination */
     PaymentDataAll,
+    /** Transaction object */
+    TxObj,
+    /** payment transaction data */
+    PayTxsData,
 
     /** update product data function parameters */
     ProductParams,

@@ -1,4 +1,4 @@
-import { ChainIds, EVMAddress, Payment, PaymentDataAll, ProductChain, ResultPromise, TokenData } from "../types";
+import { ChainIds, EVMAddress, PayTxsData, Payment, PaymentDataAll, ProductChain, ResultPromise } from "../types";
 declare const 
 /** Payment Value Text */
 payValueText: (chain: ChainIds, product: ProductChain, quantity?: string) => Promise<string | undefined>, 
@@ -8,14 +8,7 @@ payProduct: (chain: ChainIds, product: ProductChain, quantity?: string) => Resul
     paymentId?: string;
 }>, 
 /** Pay product transactions */
-payTxs: (chain: ChainIds, productId: string, quantity?: string) => ResultPromise<{
-    chainId: string;
-    contract: string;
-    token: TokenData;
-    amount: string;
-    approveTx: string;
-    payTx: string;
-}>, 
+payTxs: (chain: ChainIds, productId: string, quantity?: string) => ResultPromise<PayTxsData>, 
 /** Payments List */
 getPayments: (chain: ChainIds, pageNo: string, pageSize: string, merchantId?: string, connectedWallet?: EVMAddress) => Promise<{
     payments?: Payment[];

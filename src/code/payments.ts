@@ -1,7 +1,8 @@
-import { toBigInt } from "ethers";
+import { ethers, toBigInt } from "ethers";
 import {
     ChainIds,
     EVMAddress,
+    PayTxsData,
     Payment,
     PaymentChain,
     PaymentData,
@@ -18,7 +19,6 @@ import {
     approve,
     fromWei,
     getContract,
-    getContractUnsigned,
     getWalletAddress,
 } from "./methods";
 import {
@@ -33,6 +33,7 @@ import {
     tokenOnchainData,
 } from "./token";
 import { getProductDetails } from "./products";
+import contractABI from "../data/contract_abi.json";
 import approveABI from "../data/approve_abi.json";
 
 const
@@ -105,17 +106,8 @@ const
         chain: ChainIds,
         productId: string,
         quantity: string = `1`,
-    ): ResultPromise<{
-        chainId: string,
-        contract: string,
-        token: TokenData,
-        amount: string,
-        approveTx: string,
-        payTx: string,
-    }> => {
+    ): ResultPromise<PayTxsData> => {
         try {
-
-            let approveTx = ``;
 
             const productData = await getProductDetails(chain, productId);
             if (!productData?.success) return productData
@@ -128,36 +120,31 @@ const
                 token = await tokenOnchainData(chain, tokenAddress) || {} as TokenData,
                 amount = (toBigInt(product?.amount || 0) * toBigInt(quantity))?.toString(),
                 isNative = tokenAddress == ZERO_ADDRESS,
-                contractObj = getContractUnsigned(),
-                payTx = contractObj?.encodeFunctionData // @ts-ignore
-                    ?.payProduct(
+                payTx = new ethers.Interface(contractABI)
+                    ?.encodeFunctionData(`payProduct`, [
                         productId,
-                        quantity,
-                        isNative ? { value: amount } : undefined
-                    );
+                        quantity
+                    ]),
+                approveTx = isNative ? ``
+                    : new ethers.Interface(approveABI)
+                        ?.encodeFunctionData(`approve`, [
+                            merchantSlateContract,
+                            amount
+                        ]),
+                data: PayTxsData = {
+                    chainId,
+                    token,
+                    amount,
+                    txs: [...!isNative && approveTx ? [{
+                        to: tokenAddress,
+                        data: approveTx,
+                    }] : [], {
+                        to: merchantSlateContract,
+                        data: payTx,
+                        ...isNative ? { value: amount } : undefined
+                    }],
+                };
 
-            // approval tx
-            if (!isNative) {
-                const
-                    tokenContract = getContractUnsigned(
-                        tokenAddress,
-                        approveABI
-                    );
-                approveTx = tokenContract?.encodeFunctionData // @ts-ignore
-                    ?.approve(
-                        merchantSlateContract,
-                        amount
-                    );
-            };
-
-            const data = {
-                chainId,
-                contract: merchantSlateContract,
-                token,
-                amount,
-                approveTx,
-                payTx,
-            };
             return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);

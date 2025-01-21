@@ -1,13 +1,13 @@
 import { config, getChainsData, getConfig } from "./code/config";
 import { ZERO_ADDRESS, contractErrors, selectedChain, setSelectedChain } from "./code/contract";
 import { merchantFee, merchantSignup, getMerchantId, merchantFeeValueText } from "./code/merchant";
-import { fromWei, getBrowserWallet, getContract, getContractUnsigned, getProvider, getWalletAddress, integerString, toWei } from "./code/methods";
+import { fromWei, getBrowserWallet, getContract, getProvider, getWalletAddress, integerString, toWei } from "./code/methods";
 import { getPayments, loadPayments, payProduct, payTxs, payValueText } from "./code/payments";
 import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts, productFee, productFeeText, updateProduct } from "./code/products";
 import { processNumbers, timeAMPM, fullDateText, truncateText } from "./code/showcase";
 import { totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer } from "./code/stakes";
 import { getTokenData, getTokenRate, tokenOnchainData } from "./code/token";
-import { BlockchainNetwork, ChainIds, EVMAddress, ErrorResponse, PaymentChain, PaymentData, PaymentDataAll, ProductChain, ProductData, ProductDataAll } from "./types";
+import { BlockchainNetwork, ChainIds, EVMAddress, ErrorResponse, PayTxsData, PaymentChain, PaymentData, PaymentDataAll, ProductChain, ProductData, ProductDataAll, TxObj } from "./types";
 
 export {
     // config
@@ -33,7 +33,6 @@ export {
     getBrowserWallet,
     getProvider,
     getContract,
-    getContractUnsigned,
     getWalletAddress,
 
     // token
@@ -69,6 +68,8 @@ export {
     PaymentData,
     PaymentChain,
     PaymentDataAll,
+    PayTxsData,
+    TxObj,
 
     // showcase
     processNumbers,

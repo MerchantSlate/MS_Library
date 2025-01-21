@@ -121,7 +121,9 @@ const
                     logo,
                 };
                 tokensDataCache[chain][tokenAddress] = tokenDataObj;
-                localStorage.tokensDataCache = JSON.stringify(tokensDataCache);
+                try {
+                    localStorage.tokensDataCache = JSON.stringify(tokensDataCache);
+                } catch (e) { };
                 return tokenDataObj
             };
         } catch (error: any) {

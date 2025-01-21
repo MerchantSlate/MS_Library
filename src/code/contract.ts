@@ -11,12 +11,20 @@ import {
 
 const
     /** Selected Chain */
-    selectedChain: ChainIds = (() =>
-        localStorage.selectedChain || `POLYGON`
-    )(),
+    selectedChain: ChainIds = (() => {
+        try {
+            return localStorage.selectedChain || `POLYGON`
+        } catch (e) {
+            return `POLYGON`
+        };
+    })(),
     setSelectedChain = (
         chain: ChainIds,
-    ) => localStorage.selectedChain = chain,
+    ) => {
+        try {
+            localStorage.selectedChain = chain;
+        } catch (e) { };
+    },
     /** Zero Address */
     ZERO_ADDRESS = ZeroAddress as EVMAddress,
     /** Contract Messages */

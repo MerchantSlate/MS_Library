@@ -78,7 +78,9 @@ const
             if (typeof data != `string`) throw data
             merchantIdCache[address] = merchantIdCache[address] || {};
             merchantIdCache[address][chain] = data;
-            localStorage.merchantIdCache = JSON.stringify(merchantIdCache);
+            try {
+                localStorage.merchantIdCache = JSON.stringify(merchantIdCache);
+            } catch (e) { };
             return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);

@@ -1,8 +1,8 @@
 import { config, getChainsData, getConfig } from "./code/config";
 import { ZERO_ADDRESS, contractErrors, selectedChain, setSelectedChain } from "./code/contract";
 import { merchantFee, merchantSignup, getMerchantId, merchantFeeValueText } from "./code/merchant";
-import { fromWei, getBrowserWallet, getContract, getProvider, getWalletAddress, integerString, toWei } from "./code/methods";
-import { getPayments, loadPayments, payProduct, payValueText } from "./code/payments";
+import { fromWei, getBrowserWallet, getContract, getContractUnsigned, getProvider, getWalletAddress, integerString, toWei } from "./code/methods";
+import { getPayments, loadPayments, payProduct, payTxs, payValueText } from "./code/payments";
 import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts, productFee, productFeeText, updateProduct } from "./code/products";
 import { processNumbers, timeAMPM, fullDateText, truncateText } from "./code/showcase";
 import { totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer } from "./code/stakes";
@@ -33,6 +33,7 @@ export {
     getBrowserWallet,
     getProvider,
     getContract,
+    getContractUnsigned,
     getWalletAddress,
 
     // token
@@ -62,6 +63,7 @@ export {
     // payments
     payValueText,
     payProduct,
+    payTxs,
     getPayments,
     loadPayments,
     PaymentData,

@@ -158,6 +158,14 @@ const
             ) as any as ContractFunctions;
         return contract
     },
+    /** contract (unsigned) */
+    getContractUnsigned = (
+        address?: string,
+        abi: InterfaceAbi = contractABI,
+    ) => new Contract(
+        address || getConfig().merchantSlateContract,
+        abi
+    ),
     /** Approve Token Transfers */
     approve = async ({
         chain,
@@ -215,6 +223,7 @@ export {
     getBrowserWallet,
     getProvider,
     getContract,
+    getContractUnsigned,
     approve,
     getWalletAddress,
 };

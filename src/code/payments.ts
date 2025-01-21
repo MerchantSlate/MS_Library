@@ -9,11 +9,18 @@ import {
     PaymentRaw,
     ProductChain,
     ResultPromise,
+    TokenData,
 } from "../types";
-import { getChainsData } from "./config";
+import { getChainsData, getConfig } from "./config";
 import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
 import { getMerchantId } from "./merchant";
-import { approve, fromWei, getContract, getWalletAddress } from "./methods";
+import {
+    approve,
+    fromWei,
+    getContract,
+    getContractUnsigned,
+    getWalletAddress,
+} from "./methods";
 import {
     fullDateText,
     paginationData,
@@ -21,7 +28,12 @@ import {
     timeAMPM,
     truncateText,
 } from "./showcase";
-import { getTokenData } from "./token";
+import {
+    getTokenData,
+    tokenOnchainData,
+} from "./token";
+import { getProductDetails } from "./products";
+import approveABI from "../data/approve_abi.json";
 
 const
     /** Payment Value Text */
@@ -83,6 +95,69 @@ const
                 hash = hashRes?.data,
                 paymentId = await lastPaymentId(chain),
                 data = { hash, paymentId };
+            return { success: true, data }
+        } catch (error: any) {
+            return errorResponse(error);
+        };
+    },
+    /** Pay product transactions */
+    payTxs = async (
+        chain: ChainIds,
+        productId: string,
+        quantity: string = `1`,
+    ): ResultPromise<{
+        chainId: string,
+        contract: string,
+        token: TokenData,
+        amount: string,
+        approveTx: string,
+        payTx: string,
+    }> => {
+        try {
+
+            let approveTx = ``;
+
+            const productData = await getProductDetails(chain, productId);
+            if (!productData?.success) return productData
+
+            const
+                chainId = getChainsData()?.[chain]?.chainId,
+                { merchantSlateContract } = getConfig(),
+                product = productData?.data?.product,
+                tokenAddress = product?.token || ZERO_ADDRESS,
+                token = await tokenOnchainData(chain, tokenAddress) || {} as TokenData,
+                amount = (toBigInt(product?.amount || 0) * toBigInt(quantity))?.toString(),
+                isNative = tokenAddress == ZERO_ADDRESS,
+                contractObj = getContractUnsigned(),
+                payTx = contractObj?.encodeFunctionData // @ts-ignore
+                    ?.payProduct(
+                        productId,
+                        quantity,
+                        isNative ? { value: amount } : undefined
+                    );
+
+            // approval tx
+            if (!isNative) {
+                const
+                    tokenContract = getContractUnsigned(
+                        tokenAddress,
+                        approveABI
+                    );
+                approveTx = tokenContract?.encodeFunctionData // @ts-ignore
+                    ?.approve(
+                        merchantSlateContract,
+                        amount
+                    );
+            };
+
+            const data = {
+                chainId,
+                contract: merchantSlateContract,
+                token,
+                amount,
+                approveTx,
+                payTx,
+            };
             return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);
@@ -221,6 +296,7 @@ const
 export {
     payValueText,
     payProduct,
+    payTxs,
     getPayments,
     loadPayments,
 }

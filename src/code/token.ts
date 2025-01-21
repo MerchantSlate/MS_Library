@@ -1,3 +1,4 @@
+import { ZeroAddress } from "ethers";
 import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataRaw } from "../types";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS } from "./contract";
@@ -39,6 +40,15 @@ const
         tokenAddress: EVMAddress,
     ): Promise<TokenData | undefined> => {
         try {
+            if (tokenAddress == ZeroAddress) {
+                const nativeCurrency = getChainsData()
+                    ?.[chain]
+                    ?.nativeCurrency;
+                return {
+                    address: tokenAddress,
+                    ...nativeCurrency,
+                };
+            };
             const contract = await getContract(chain);
             return tokenDataConvert(
                 chain,

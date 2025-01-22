@@ -150,6 +150,7 @@ const
             return errorResponse(error);
         };
     },
+    /** Payment Validation */
     payValidation = async ({
         chain,
         productId,
@@ -169,7 +170,7 @@ const
                     getPayments(
                         chain,
                         `0`,
-                        `1`,
+                        `20`,
                         `0`,
                         walletAddress
                     )
@@ -182,15 +183,25 @@ const
                 product = requiredRes?.data?.product,
                 amount = product?.amount,
                 token = product?.token,
-                payments = paymentsData?.payments || [],
-                lastPayment = payments[0],
-                tokenValid = lastPayment?.token?.toLowerCase()
-                    == token?.toLowerCase(),
-                amountValid = lastPayment?.amount == amount
-                    || +lastPayment?.amount >= +amount,
-                data = lastPayment?.id;
-            return tokenValid && amountValid ?
-                { success: true, data }
+                payments = paymentsData?.payments || [];
+
+            let data = ``;
+
+            for (let i = 0; i < payments.length; i++) {
+                const
+                    payData = payments[i],
+                    productValid = payData.prod == productId,
+                    tokenValid = payData?.token?.toLowerCase()
+                        == token?.toLowerCase(),
+                    amountValid = payData?.amount == amount
+                        || +payData?.amount >= +amount;
+                if (productValid && tokenValid && amountValid) {
+                    data = payData?.id;
+                    break;
+                };
+            };
+
+            return data ? { success: true, data }
                 : errorResponse(undefined);
         } catch (error: any) {
             return errorResponse(error);

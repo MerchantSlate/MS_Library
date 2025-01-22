@@ -8,7 +8,9 @@ payProduct: (chain: ChainIds, product: ProductChain, quantity?: string) => Resul
     paymentId?: string;
 }>, 
 /** Pay product transactions */
-payTxs: (chain: ChainIds, productId: string, quantity?: string) => ResultPromise<PayTxsData>, payValidation: ({ chain, productId, walletAddress, }: {
+payTxs: (chain: ChainIds, productId: string, quantity?: string) => ResultPromise<PayTxsData>, 
+/** Payment Validation */
+payValidation: ({ chain, productId, walletAddress, }: {
     chain: ChainIds;
     productId: string;
     walletAddress: EVMAddress;

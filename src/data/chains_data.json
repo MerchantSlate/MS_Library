@@ -22,6 +22,29 @@
         "explorer": "https://etherscan.io/tx/",
         "coingeckoId": "ethereum"
     },
+    "APT": {
+        "deployed": false,
+        "USDT": {
+            "address": "",
+            "decimals": 6
+        },
+        "chainId": "1400",
+        "chainName": "Aptos Blockchain",
+        "nativeCurrency": {
+            "name": "Aptos",
+            "symbol": "APT",
+            "decimals": 18
+        },
+        "rpcUrls": [
+            "https://fullnode.mainnet.aptoslabs.com"
+        ],
+        "blockExplorerUrls": [
+            "https://explorer.aptoslabs.com/"
+        ],
+        "logo": "https://cryptologos.cc/logos/aptos-apt-logo.svg",
+        "explorer": "https://explorer.aptoslabs.com/txn/",
+        "coingeckoId": "aptos"
+    },
     "BSC": {
         "deployed": true,
         "USDT": {

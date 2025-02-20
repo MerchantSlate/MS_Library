@@ -8,7 +8,7 @@ getConfig: () => {
     walletPrivateKey: string;
     walletSeedPhrase: string;
     merchantSlateContract: string;
-}, config: ({ browserWallet, walletPrivateKey, walletSeedPhrase, ARBITRUM_RPC, AVALANCHE_RPC, BSC_RPC, CELO_RPC, ETH_RPC, FANTOM_RPC, OPTIMISM_RPC, POLYGON_RPC, billionSuffix, millionSuffix, merchantSlateContract, }: {
+}, config: ({ browserWallet, walletPrivateKey, walletSeedPhrase, ARBITRUM_RPC, AVALANCHE_RPC, APT_RPC, BSC_RPC, CELO_RPC, ETH_RPC, FANTOM_RPC, OPTIMISM_RPC, POLYGON_RPC, billionSuffix, millionSuffix, merchantSlateContract, }: {
     /** browser extension wallet */
     browserWallet?: string;
     /** wallet private key (optional) */
@@ -23,6 +23,8 @@ getConfig: () => {
     ARBITRUM_RPC?: string;
     /** AVALANCHE RPC URL */
     AVALANCHE_RPC?: string;
+    /** APT RPC URL */
+    APT_RPC?: string;
     /** BSC RPC URL */
     BSC_RPC?: string;
     /** CELO RPC URL */

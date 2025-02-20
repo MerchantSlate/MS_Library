@@ -196,6 +196,7 @@ interface NativeCoin {
 }
 interface SupportedChainsData {
     ETH: BlockchainNetwork;
+    APT: BlockchainNetwork;
     BSC: BlockchainNetwork;
     POLYGON: BlockchainNetwork;
     AVALANCHE: BlockchainNetwork;

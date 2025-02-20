@@ -28,6 +28,8 @@ merchant.config({
     ARBITRUM_RPC:``,
     /** AVALANCHE RPC URL */
     AVALANCHE_RPC:``,
+    /** APT RPC URL */
+    APT_RPC:``,
     /** BSC RPC URL */
     BSC_RPC:``,
     /** CELO RPC URL */

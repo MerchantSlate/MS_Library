@@ -23,6 +23,7 @@ const
         walletSeedPhrase,
         ARBITRUM_RPC,
         AVALANCHE_RPC,
+        APT_RPC,
         BSC_RPC,
         CELO_RPC,
         ETH_RPC,
@@ -48,6 +49,8 @@ const
         ARBITRUM_RPC?: string,
         /** AVALANCHE RPC URL */
         AVALANCHE_RPC?: string,
+        /** APT RPC URL */
+        APT_RPC?: string,
         /** BSC RPC URL */
         BSC_RPC?: string,
         /** CELO RPC URL */
@@ -77,6 +80,7 @@ const
         // update RPCs
         if (ARBITRUM_RPC) chainsData.ARBITRUM.rpcUrls[0] = ARBITRUM_RPC;
         if (AVALANCHE_RPC) chainsData.AVALANCHE.rpcUrls[0] = AVALANCHE_RPC;
+        if (APT_RPC) chainsData.APT.rpcUrls[0] = APT_RPC;
         if (BSC_RPC) chainsData.BSC.rpcUrls[0] = BSC_RPC;
         if (CELO_RPC) chainsData.CELO.rpcUrls[0] = CELO_RPC;
         if (ETH_RPC) chainsData.ETH.rpcUrls[0] = ETH_RPC;

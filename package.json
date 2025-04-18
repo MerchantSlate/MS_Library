@@ -1,6 +1,6 @@
 {
   "name": "merchantslate",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "dist/merchant.min.js",
   "module": "dist/merchant.min.js",
   "browser": "dist/merchant.min.js",
@@ -37,7 +37,8 @@
     "webpack-dev-server": "^5.2.0"
   },
   "dependencies": {
-    "ethers": "^6.13.4"
+    "ethers": "^6.13.4",
+    "node-fetch": "^3.3.2"
   },
   "files": [
     "dist/"

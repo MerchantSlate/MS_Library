@@ -15,6 +15,9 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.js'], // Resolve .ts and .js files
+        fallback: {
+            fetch: require.resolve('node-fetch'),
+        },
     },
     module: {
         rules: [

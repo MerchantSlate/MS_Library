@@ -1,6 +1,6 @@
 {
   "name": "merchantslate",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "main": "dist/node/merchant.node.min.js",
   "module": "dist/browser/merchant.min.js",
   "browser": "dist/browser/merchant.min.js",
@@ -41,8 +41,6 @@
     "ethers": "^6.13.4"
   },
   "files": [
-    "dist/browser/",
-    "dist/node/",
-    "dist/index.d.ts"
+    "dist/"
   ]
 }

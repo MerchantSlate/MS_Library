@@ -8,6 +8,7 @@ import {
     StringObj,
     TransactionResponse
 } from "../types";
+import { getConfig } from "./config";
 
 const
     /** Selected Chain */
@@ -53,6 +54,7 @@ const
     },
     /** Contract Error Response Processing */
     errorResponse = (error: any): ErrorResponse => {
+        if (getConfig()?.consoleLogEnabled) console.log(`Contract error`, error);
         const
             defaultError = `UNKNOWN_ERROR`,
             errorCode: ErrorCodeString = error?.reason

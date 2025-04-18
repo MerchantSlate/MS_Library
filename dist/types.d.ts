@@ -342,6 +342,8 @@ interface MerchantConfigParams extends MerchantRPCs {
     millionSuffix?: string;
     /** MerchantSlate Contract Address (does not require change) */
     merchantSlateContract?: string;
+    /** Log contract errors (default true) */
+    consoleLogEnabled?: boolean;
 }
 export { 
 /** result promise */

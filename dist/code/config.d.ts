@@ -8,5 +8,6 @@ getConfig: () => {
     walletPrivateKey: string;
     walletSeedPhrase: string;
     merchantSlateContract: string;
-}, config: ({ browserWallet, walletPrivateKey, walletSeedPhrase, ARBITRUM_RPC, AVALANCHE_RPC, APT_RPC, BSC_RPC, CELO_RPC, ETH_RPC, FANTOM_RPC, OPTIMISM_RPC, POLYGON_RPC, billionSuffix, millionSuffix, merchantSlateContract, }: MerchantConfigParams) => void;
+    consoleLogEnabled: boolean;
+}, config: ({ browserWallet, walletPrivateKey, walletSeedPhrase, ARBITRUM_RPC, AVALANCHE_RPC, APT_RPC, BSC_RPC, CELO_RPC, ETH_RPC, FANTOM_RPC, OPTIMISM_RPC, POLYGON_RPC, billionSuffix, millionSuffix, merchantSlateContract, consoleLogEnabled, }: MerchantConfigParams) => void;
 export { getChainsData, getConfig, config, };

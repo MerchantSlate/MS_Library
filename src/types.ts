@@ -425,6 +425,9 @@ interface MerchantConfigParams extends MerchantRPCs {
 
     /** MerchantSlate Contract Address (does not require change) */
     merchantSlateContract?: string,
+
+    /** Log contract errors (default true) */
+    consoleLogEnabled?: boolean,
 };
 
 export {

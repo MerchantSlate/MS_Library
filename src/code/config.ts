@@ -14,6 +14,7 @@ const
         walletPrivateKey: ``,
         walletSeedPhrase: ``,
         merchantSlateContract,
+        consoleLogEnabled: true,
     },
     /** Get updated configuration */
     getConfig = () => configuration,
@@ -33,6 +34,7 @@ const
         billionSuffix,
         millionSuffix,
         merchantSlateContract,
+        consoleLogEnabled,
     }: MerchantConfigParams) => {
         // update wallet
         if (browserWallet) configuration.browserWallet = browserWallet;
@@ -57,7 +59,12 @@ const
         });
 
         // update contract
-        if (merchantSlateContract) configuration.merchantSlateContract = merchantSlateContract;
+        if (merchantSlateContract)
+            configuration.merchantSlateContract = merchantSlateContract;
+
+        // contract errors log
+        if (consoleLogEnabled != undefined)
+            configuration.consoleLogEnabled = consoleLogEnabled;
     };
 
 export {

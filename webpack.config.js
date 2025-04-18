@@ -10,7 +10,8 @@ const commonConfig = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         library: 'merchant',         // Global variable for browsers
-        globalObject: 'this',         // Fix for UMD in Node.js
+        libraryExport: 'default',    // Ensure default export is accessible
+        globalObject: 'this',        // Fix for UMD in Node.js
     },
     resolve: {
         extensions: ['.ts', '.js'], // Resolve .ts and .js files
@@ -33,11 +34,16 @@ const commonConfig = {
     ],
     optimization: {
         minimize: true,           // Minify the output
-        minimizer: [new TerserPlugin()],
+        minimizer: [new TerserPlugin({
+            terserOptions: {
+                sourceMap: true,  // Enable source maps for debugging
+            },
+        })],
         usedExports: true,        // Enable tree-shaking
-        sideEffects: false        // Mark the project as free of side effects
+        sideEffects: false,       // Mark the project as free of side effects
     },
-    mode: 'production',          // Ensure output is optimised
+    mode: 'production',          // Ensure output is optimized
+    devtool: 'source-map',       // Generate source maps for better debugging
 };
 
 module.exports = [{
@@ -60,9 +66,17 @@ module.exports = [{
         filename: 'merchant.node.min.js',
         libraryTarget: 'commonjs2', // CommonJS for Node.js
     },
-    externals: {
-        fs: 'commonjs fs',
-        path: 'commonjs path',
-        crypto: 'commonjs crypto',
+    externals: [
+        // Handle Node.js built-in modules
+        ({ request }, callback) => {
+            if (/^(fs|path|crypto)$/.test(request)) {
+                return callback(null, `commonjs ${request}`);
+            }
+            callback();
+        },
+    ],
+    node: {
+        __dirname: false, // Prevent Webpack from mocking __dirname
+        __filename: false, // Prevent Webpack from mocking __filename
     },
 }];

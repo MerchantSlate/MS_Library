@@ -4,20 +4,16 @@ const
     { CleanWebpackPlugin } = require('clean-webpack-plugin'),
     TerserPlugin = require('terser-webpack-plugin');
 
-module.exports = {
+// Common configuration
+const commonConfig = {
     entry: './src/index.ts', // Entry point for your library
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'merchant.min.js', // Output file name
         library: 'merchant',         // Global variable for browsers
-        libraryTarget: 'umd',         // Universal Module Definition
         globalObject: 'this',         // Fix for UMD in Node.js
     },
     resolve: {
         extensions: ['.ts', '.js'], // Resolve .ts and .js files
-        fallback: {
-            fetch: require.resolve('node-fetch'),
-        },
     },
     module: {
         rules: [
@@ -43,3 +39,30 @@ module.exports = {
     },
     mode: 'production',          // Ensure output is optimised
 };
+
+module.exports = [{
+    // Browser configuration
+    ...commonConfig,
+    target: 'web',
+    output: {
+        ...commonConfig.output,
+        path: path.resolve(__dirname, 'dist/browser'), // Separate output directory
+        filename: 'merchant.min.js',
+        libraryTarget: 'umd', // UMD for browser
+    },
+}, {
+    // Node.js configuration
+    ...commonConfig,
+    target: 'node',
+    output: {
+        ...commonConfig.output,
+        path: path.resolve(__dirname, 'dist/node'), // Separate output directory
+        filename: 'merchant.node.min.js',
+        libraryTarget: 'commonjs2', // CommonJS for Node.js
+    },
+    externals: {
+        fs: 'commonjs fs',
+        path: 'commonjs path',
+        crypto: 'commonjs crypto',
+    },
+}];

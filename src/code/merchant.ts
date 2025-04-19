@@ -1,4 +1,3 @@
-import { hash } from "crypto";
 import { ChainIds, ResultPromise } from "../types";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
@@ -112,7 +111,7 @@ const
             const
                 hash = hashRes.data,
                 merchantId = merchantIdRes.data,
-                data = { hash, merchantId }
+                data = { hash, merchantId };
             return { success: true, data }
         } catch (error: any) {
             return errorResponse(error);

@@ -9,6 +9,9 @@ const commonConfig = {
     entry: `./src/index.ts`, // Entry point for your library
     resolve: {
         extensions: [`.ts`, `.js`], // Resolve .ts and .js files
+        fallback: {
+            fetch: require.resolve(`node-fetch`),
+        },
     },
     module: {
         rules: [

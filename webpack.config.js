@@ -39,8 +39,8 @@ const commonConfig = {
                 sourceMap: true,  // Enable source maps for debugging
             },
         })],
-        usedExports: true,        // Enable tree-shaking
-        sideEffects: false,       // Mark the project as free of side effects
+        usedExports: false, // Disable tree-shaking
+        sideEffects: true,  // Preserve all code
     },
     mode: 'production',          // Ensure output is optimized
     devtool: 'source-map',       // Generate source maps for better debugging

@@ -1,6 +1,6 @@
 {
   "name": "merchantslate",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "main": "dist/node/merchant.node.min.js",
   "module": "dist/node/merchant.node.min.js",
   "browser": "dist/browser/merchant.min.js",
@@ -14,13 +14,13 @@
     "payment database"
   ],
   "author": "Prince Hasn",
-  "homepage": "https://github.com/MerchantSlate/MSLibrary#readme",
+  "homepage": "https://github.com/MerchantSlate/MS_Library#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MerchantSlate/MSLibrary.git"
+    "url": "git+https://github.com/MerchantSlate/MS_Library.git"
   },
   "bugs": {
-    "url": "https://github.com/MerchantSlate/MSLibrary/issues"
+    "url": "https://github.com/MerchantSlate/MS_Library/issues"
   },
   "license": "MIT",
   "description": "MerchantSlate is the onchain crypto payment database",

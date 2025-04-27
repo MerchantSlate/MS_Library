@@ -18,7 +18,7 @@
         "blockExplorerUrls": [
             "https://etherscan.io"
         ],
-        "logo": "https://cryptologos.cc/logos/ethereum-eth-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/ETH.svg",
         "explorer": "https://etherscan.io/tx/",
         "coingeckoId": "ethereum"
     },
@@ -41,7 +41,7 @@
         "blockExplorerUrls": [
             "https://explorer.aptoslabs.com/"
         ],
-        "logo": "https://cryptologos.cc/logos/aptos-apt-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/APT.svg",
         "explorer": "https://explorer.aptoslabs.com/txn/",
         "coingeckoId": "aptos"
     },
@@ -64,7 +64,7 @@
         "blockExplorerUrls": [
             "https://bscscan.com"
         ],
-        "logo": "https://cryptologos.cc/logos/bnb-bnb-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/BSC.svg",
         "explorer": "https://bscscan.com/tx/",
         "coingeckoId": "binance-smart-chain"
     },
@@ -87,7 +87,7 @@
         "blockExplorerUrls": [
             "https://polygonscan.com"
         ],
-        "logo": "https://cryptologos.cc/logos/polygon-matic-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/POLYGON.svg",
         "explorer": "https://polygonscan.com/tx/",
         "coingeckoId": "polygon"
     },
@@ -110,7 +110,7 @@
         "blockExplorerUrls": [
             "https://snowtrace.io"
         ],
-        "logo": "https://cryptologos.cc/logos/avalanche-avax-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/AVALANCHE.svg",
         "explorer": "https://snowtrace.io/tx/",
         "coingeckoId": "avalanche-2"
     },
@@ -133,7 +133,7 @@
         "blockExplorerUrls": [
             "https://ftmscan.com"
         ],
-        "logo": "https://cryptologos.cc/logos/fantom-ftm-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/FANTOM.svg",
         "explorer": "https://ftmscan.com/tx/",
         "coingeckoId": "fantom"
     },
@@ -156,7 +156,7 @@
         "blockExplorerUrls": [
             "https://arbiscan.io"
         ],
-        "logo": "https://cryptologos.cc/logos/arbitrum-arb-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/ARBITRUM.svg",
         "explorer": "https://arbiscan.io/tx/",
         "coingeckoId": "arbitrum"
     },
@@ -179,7 +179,7 @@
         "blockExplorerUrls": [
             "https://optimistic.etherscan.io"
         ],
-        "logo": "https://cryptologos.cc/logos/optimism-ethereum-op-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/OPTIMISM.svg",
         "explorer": "https://optimistic.etherscan.io/tx/",
         "coingeckoId": "optimism"
     },
@@ -202,7 +202,7 @@
         "blockExplorerUrls": [
             "https://explorer.celo.org"
         ],
-        "logo": "https://cryptologos.cc/logos/celo-celo-logo.svg",
+        "logo": "https://merchantslate.com/assets/chains/CELO.svg",
         "explorer": "https://explorer.celo.org/mainnet/tx/",
         "coingeckoId": "celo"
     }

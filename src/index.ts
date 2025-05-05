@@ -7,7 +7,7 @@ import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts
 import { processNumbers, timeAMPM, fullDateText, truncateText } from "./code/showcase";
 import { totalStakes, stakesCount, transferStake, offerStake, stakesOffered, takeStake, removeStakeOffer } from "./code/stakes";
 import { getTokenData, getTokenRate, tokenOnchainData } from "./code/token";
-import { BlockchainNetwork, ChainIds, EVMAddress, ErrorResponse, MerchantConfigParams, PayTxsData, PaymentChain, PaymentData, PaymentDataAll, ProductChain, ProductData, ProductDataAll, TxObj } from "./types";
+import { BlockchainNetwork, ChainIds, EVMAddress, ErrorResponse, MerchantConfigParams, PayTxsData, Payment, PaymentChain, PaymentData, PaymentDataAll, ProductChain, ProductData, ProductDataAll, TxObj } from "./types";
 
 export {
     // config
@@ -67,6 +67,7 @@ export {
     payValidation,
     getPayments,
     loadPayments,
+    Payment,
     PaymentData,
     PaymentChain,
     PaymentDataAll,

@@ -14,7 +14,7 @@ payValidation: ({ chain, productId, walletAddress, }: {
     chain: ChainIds;
     productId: string;
     walletAddress: EVMAddress;
-}) => ResultPromise<string>, 
+}) => ResultPromise<Payment>, 
 /** Payments List */
 getPayments: (chain: ChainIds, pageNo: string, pageSize: string, merchantId?: string, connectedWallet?: EVMAddress) => Promise<{
     payments?: Payment[];

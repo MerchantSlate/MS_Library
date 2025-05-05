@@ -159,7 +159,7 @@ const
         chain: ChainIds,
         productId: string,
         walletAddress: EVMAddress,
-    }): ResultPromise<string> => {
+    }): ResultPromise<Payment> => {
         try {
             const
                 allData = await Promise.all([
@@ -185,8 +185,6 @@ const
                 token = product?.token,
                 payments = paymentsData?.payments || [];
 
-            let data = ``;
-
             for (let i = 0; i < payments.length; i++) {
                 const
                     payData = payments[i],
@@ -195,14 +193,11 @@ const
                         == token?.toLowerCase(),
                     amountValid = payData?.amount == amount
                         || +payData?.amount >= +amount;
-                if (productValid && tokenValid && amountValid) {
-                    data = payData?.id;
-                    break;
-                };
+                if (productValid && tokenValid && amountValid)
+                    return { success: true, data: payData };
             };
 
-            return data ? { success: true, data }
-                : errorResponse(undefined);
+            return errorResponse(undefined);
         } catch (error: any) {
             return errorResponse(error);
         };

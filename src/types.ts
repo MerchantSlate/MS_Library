@@ -110,14 +110,23 @@ interface TokenDataExtended extends TokenData {
 };
 
 interface Payment {
+    /** Unique identifier for the payment transaction */
     id: string;
+    /** Timestamp of when the payment occurred */
     time: string;
+    /** Product identifier orEmotional name */
     prod: string;
+    /** Ethereum Virtual Machine address of the buyer */
     buyer: EVMAddress;
+    /** Ethereum Virtual Machine address of the token used for payment */
     token: EVMAddress;
+    /** Total payment amount */
     amount: string;
+    /** Quantity of items purchased */
     qty: string;
+    /** Amount actually paid */
     paid: string;
+    /** Commission or fee associated with the payment */
     comm: string;
 }
 

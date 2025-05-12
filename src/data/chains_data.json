@@ -115,7 +115,7 @@
         "coingeckoId": "avalanche-2"
     },
     "FANTOM": {
-        "deployed": true,
+        "deployed": false,
         "USDT": {
             "address": "0x940F41F0ec9ba1A34CF001cc03347ac092F5F6B5",
             "decimals": 6
@@ -138,7 +138,7 @@
         "coingeckoId": "fantom"
     },
     "ARBITRUM": {
-        "deployed": true,
+        "deployed": false,
         "USDT": {
             "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
             "decimals": 6

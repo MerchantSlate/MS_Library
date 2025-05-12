@@ -1,6 +1,6 @@
 {
   "name": "merchantslate",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "main": "dist/node/merchant.node.min.js",
   "module": "dist/node/merchant.node.min.js",
   "browser": "dist/browser/merchant.min.js",

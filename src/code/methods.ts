@@ -161,7 +161,7 @@ const
                 walletPrivateKey ? new Wallet(walletPrivateKey).connect(provider)
                     : walletSeedPhrase ? Wallet.fromPhrase(walletSeedPhrase).connect(provider)
                         : await provider?.getSigner()
-                : Wallet.createRandom(provider);
+                : Wallet.createRandom().connect(provider);
         return signer
     },
     /** wallet contract */

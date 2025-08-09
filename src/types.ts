@@ -184,9 +184,12 @@ interface PaymentData {
     buyerAddress: string;
     buyerAddressTxt: string;
     paidPrice: string;
+    paidPriceUSD: number;
     paidTotal: string;
+    paidTotalUSD: number;
     paidQty: string;
     paidFee: string;
+    paidFeeUSD: number;
 }
 
 interface PaymentDataAll extends PaginationData {

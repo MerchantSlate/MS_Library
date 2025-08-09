@@ -283,7 +283,10 @@ const
                     tokenRateUSD = tokenAddress && await getTokenRate({
                         chain,
                         tokenAddress,
-                    }),
+                    }) || 0,
+                    paidPrice = fromWei(price, tokenData?.decimals || 18),
+                    paidTotal = fromWei(paymentAmount?.toString(), tokenData?.decimals || 18),
+                    paidFee = fromWei(fees?.toFixed(0), tokenData?.decimals || 18),
                     paymentDataReturn: PaymentData = {
                         index,
                         payment,
@@ -299,10 +302,13 @@ const
                         paymentTimestamp: time,
                         buyerAddress: payment.buyer,
                         buyerAddressTxt: truncateText(payment.buyer),
-                        paidPrice: `${tokenData?.symbol} ${processNumbers(fromWei(price, tokenData?.decimals || 18))}`,
-                        paidTotal: `${tokenData?.symbol} ${processNumbers(fromWei(paymentAmount?.toString(), tokenData?.decimals || 18))}`,
+                        paidPrice: `${tokenData?.symbol} ${processNumbers(paidPrice)}`,
+                        paidPriceUSD: paidPrice * tokenRateUSD,
+                        paidTotal: `${tokenData?.symbol} ${processNumbers(paidTotal)}`,
+                        paidTotalUSD: paidTotal * tokenRateUSD,
                         paidQty: processNumbers(+quantity),
-                        paidFee: `${tokenData?.symbol} ${processNumbers(fromWei(fees?.toFixed(0), tokenData?.decimals || 18))}`,
+                        paidFee: `${tokenData?.symbol} ${processNumbers(paidFee)}`,
+                        paidFeeUSD: paidFee * tokenRateUSD,
                     }
                 return paymentDataReturn
             },

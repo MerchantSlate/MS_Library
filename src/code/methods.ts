@@ -25,24 +25,24 @@ const
     multiplyNumbers = (
         a: number | string | bigint,
         b: number | string | bigint,
-    ): string => {
+    ): number => {
         try {
-            const value = toBigInt(a) * toBigInt(b);
-            return value?.toString();
+            const value = +a?.toString() * +b?.toString();
+            return value;
         } catch {
-            return `0`
+            return 0
         };
     },
     /** Divide Numbers */
     divideNumbers = (
         a: number | string | bigint,
         b: number | string | bigint,
-    ): string => {
+    ): number => {
         try {
-            const value = toBigInt(a) / toBigInt(b);
-            return value?.toString();
+            const value = +a?.toString() / +b?.toString();
+            return value;
         } catch {
-            return `0`
+            return 0
         };
     },
     /** Integer Number string */

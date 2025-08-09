@@ -152,7 +152,7 @@ const
         tokenAddress: EVMAddress,
         referenceAddress?: EVMAddress,
         referenceDecimals?: number,
-    }): Promise<string> => {
+    }): Promise<number> => {
         try {
 
             // check cached
@@ -163,7 +163,7 @@ const
             if (
                 cached?.updateTime
                 && cached.updateTime > (Date.now() - tokenRateLimit)
-                && +cached.data
+                && cached.data
             ) return cached.data;
 
             const
@@ -191,7 +191,7 @@ const
             setTokensRateCache(tokensRateCache);
             return rate
         } catch (e) {
-            return ``
+            return 0
         };
     };
 

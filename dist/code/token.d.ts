@@ -12,5 +12,5 @@ getTokenRate: ({ chain, tokenAddress, referenceAddress, referenceDecimals, }: {
     tokenAddress: EVMAddress;
     referenceAddress?: EVMAddress;
     referenceDecimals?: number;
-}) => Promise<string>;
+}) => Promise<number>;
 export { getTokenLogo, getTokenData, tokenOnchainData, getTokenRate, };

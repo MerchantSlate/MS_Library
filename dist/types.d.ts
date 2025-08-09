@@ -73,7 +73,7 @@ interface TokenRateObj {
     [chain: string]: {
         [token_ref: string]: {
             updateTime: number;
-            data: string;
+            data: number;
         };
     };
 }
@@ -120,7 +120,7 @@ interface PaymentData {
     chainLogoAlt: string;
     tokenLogoImg?: string;
     tokenLogoAlt?: string;
-    tokenRateUSD?: string;
+    tokenRateUSD?: number;
     paymentIdText: string;
     paymentTime: string;
     paymentTimestamp: number;
@@ -155,7 +155,7 @@ interface Product {
 interface ProductExtended {
     product: Product;
     token: TokenData;
-    usdValue: string;
+    usdValue: number;
 }
 interface ProductRaw {
     /** id */

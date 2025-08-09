@@ -4,9 +4,9 @@ declare const
 /** Get BigNumbers */
 decimalFactor: (decimals: number | string | bigint) => bigint, 
 /** Multiply Numbers */
-multiplyNumbers: (a: number | string | bigint, b: number | string | bigint) => string, 
+multiplyNumbers: (a: number | string | bigint, b: number | string | bigint) => number, 
 /** Divide Numbers */
-divideNumbers: (a: number | string | bigint, b: number | string | bigint) => string, 
+divideNumbers: (a: number | string | bigint, b: number | string | bigint) => number, 
 /** Integer Number string */
 integerString: (value: number) => string, 
 /** Convert to Wei Values */

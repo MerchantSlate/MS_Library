@@ -1,7 +1,7 @@
 import { config, getChainsData, getConfig } from "./code/config";
 import { ZERO_ADDRESS, contractErrors, selectedChain, setSelectedChain } from "./code/contract";
 import { merchantFee, merchantSignup, getMerchantId, merchantFeeValueText } from "./code/merchant";
-import { decimalFactor, divideNumbers, fromWei, getBrowserWallet, getContract, getProvider, getWalletAddress, integerString, multiplyNumbers, toWei } from "./code/methods";
+import { fromWei, getBrowserWallet, getContract, getProvider, getWalletAddress, integerString, toWei } from "./code/methods";
 import { getPayments, loadPayments, payProduct, payTxs, payValidation, payValueText } from "./code/payments";
 import { addProduct, deleteProduct, getProductDetails, getProducts, loadProducts, productFee, productFeeText, updateProduct } from "./code/products";
 import { processNumbers, timeAMPM, fullDateText, truncateText } from "./code/showcase";
@@ -28,9 +28,6 @@ export {
     truncateText,
 
     // methods
-    decimalFactor,
-    multiplyNumbers,
-    divideNumbers,
     integerString,
     toWei,
     fromWei,

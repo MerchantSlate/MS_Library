@@ -30,6 +30,7 @@ import {
 } from "./showcase";
 import {
     getTokenData,
+    getTokenRate,
     tokenOnchainData,
 } from "./token";
 import { getProductDetails } from "./products";
@@ -117,7 +118,7 @@ const
                 { merchantSlateContract } = getConfig(),
                 product = productData?.data?.product,
                 tokenAddress = product?.token || ZERO_ADDRESS,
-                token = await tokenOnchainData(chain, tokenAddress) || {} as TokenData,
+                token: TokenData = await getTokenData(chain, tokenAddress, true) || {} as TokenData,
                 amount = (toBigInt(product?.amount || 0) * toBigInt(quantity))?.toString(),
                 isNative = tokenAddress == ZERO_ADDRESS,
                 payTx = new ethers.Interface(contractABI)
@@ -277,26 +278,33 @@ const
                     paymentAmount = +quantity * +price,
                     fees = paymentAmount - +payment.paid - +payment.comm,
                     tokenData = await getTokenData(chain, payment.token),
-                    paymentId = payment?.id;
-                return {
-                    index,
-                    payment,
-                    tokenData,
-                    isRemoved: !+paymentId,
-                    chainLogoImg: chainsData[chain].logo,
-                    chainLogoAlt: `${chainsData[chain].chainName} chain logo`,
-                    tokenLogoImg: tokenData?.logo,
-                    tokenLogoAlt: `${tokenData?.name} token logo`,
-                    paymentIdText: `#${paymentId}`,
-                    paymentTime: `${timeAMPM(time)} - ${fullDateText(time)}`,
-                    paymentTimestamp: time,
-                    buyerAddress: payment.buyer,
-                    buyerAddressTxt: truncateText(payment.buyer),
-                    paidPrice: `${tokenData?.symbol} ${processNumbers(fromWei(price, tokenData?.decimals || 18))}`,
-                    paidTotal: `${tokenData?.symbol} ${processNumbers(fromWei(paymentAmount?.toString(), tokenData?.decimals || 18))}`,
-                    paidQty: processNumbers(+quantity),
-                    paidFee: `${tokenData?.symbol} ${processNumbers(fromWei(fees?.toFixed(0), tokenData?.decimals || 18))}`,
-                }
+                    paymentId = payment?.id,
+                    tokenAddress = tokenData?.address,
+                    tokenRateUSD = tokenAddress && await getTokenRate({
+                        chain,
+                        tokenAddress,
+                    }),
+                    paymentDataReturn: PaymentData = {
+                        index,
+                        payment,
+                        tokenData,
+                        isRemoved: !+paymentId,
+                        chainLogoImg: chainsData[chain].logo,
+                        chainLogoAlt: `${chainsData[chain].chainName} chain logo`,
+                        tokenLogoImg: tokenData?.logo,
+                        tokenRateUSD,
+                        tokenLogoAlt: `${tokenData?.name} token logo`,
+                        paymentIdText: `#${paymentId}`,
+                        paymentTime: `${timeAMPM(time)} - ${fullDateText(time)}`,
+                        paymentTimestamp: time,
+                        buyerAddress: payment.buyer,
+                        buyerAddressTxt: truncateText(payment.buyer),
+                        paidPrice: `${tokenData?.symbol} ${processNumbers(fromWei(price, tokenData?.decimals || 18))}`,
+                        paidTotal: `${tokenData?.symbol} ${processNumbers(fromWei(paymentAmount?.toString(), tokenData?.decimals || 18))}`,
+                        paidQty: processNumbers(+quantity),
+                        paidFee: `${tokenData?.symbol} ${processNumbers(fromWei(fees?.toFixed(0), tokenData?.decimals || 18))}`,
+                    }
+                return paymentDataReturn
             },
             merchantIdRes = isMerchantOnly ? await getMerchantId(chain) : undefined,
             merchantId = merchantIdRes?.success ? merchantIdRes?.data : `0`,

@@ -6,6 +6,10 @@ interface StringObj {
     [key: string]: string
 };
 
+interface StringObjObj {
+    [key: string]: StringObj
+};
+
 type EVMAddress = `0x${string}`;
 
 interface ContractFunctions {
@@ -82,8 +86,8 @@ interface ContractFunctions {
     getTokenData: (tokenAddress: EVMAddress) => Promise<TokenDataRaw>;
     tokenRate: (
         tokenAddress: EVMAddress,
-        amount: string,
-        referenceAddress: EVMAddress
+        referenceWei: string,
+        referenceAddress: EVMAddress,
     ) => Promise<BigInt>;
 }
 
@@ -107,6 +111,24 @@ interface TokenData {
 
 interface TokenDataExtended extends TokenData {
     logo: string;
+};
+
+interface TokenDataExtendedObj {
+    [chain: string]: {
+        [token: string]: {
+            updateTime: number,
+            data: TokenDataExtended,
+        },
+    },
+};
+
+interface TokenRateObj {
+    [chain: string]: {
+        [token_ref: string]: {
+            updateTime: number,
+            data: string,
+        },
+    },
 };
 
 interface Payment {
@@ -155,6 +177,7 @@ interface PaymentData {
     chainLogoAlt: string;
     tokenLogoImg?: string;
     tokenLogoAlt?: string;
+    tokenRateUSD?: string;
     paymentIdText: string;
     paymentTime: string;
     paymentTimestamp: number;
@@ -445,6 +468,10 @@ export {
 
     /** strings object */
     StringObj,
+
+    /** strings object nested */
+    StringObjObj,
+
     /** EVM address string */
     EVMAddress,
 
@@ -462,6 +489,12 @@ export {
     TokenData,
     /** token data + logo string */
     TokenDataExtended,
+
+    /** tokens data cache */
+    TokenDataExtendedObj,
+
+    /** tokens price cache */
+    TokenRateObj,
 
     /** transaction function response */
     TransactionResponse,

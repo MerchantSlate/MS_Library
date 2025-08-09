@@ -1,25 +1,25 @@
-import { ChainIds, ResultPromise } from "../types";
+import { ChainIds, ResultPromise, StringObjObj } from "../types";
+import { readCache, saveCache } from "./cache";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
 import { fromWei, getContract, getWalletAddress, multiplyNumbers } from "./methods";
 import { processNumbers } from "./showcase";
 import { getTokenRate } from "./token";
 
+const merchantIdCacheKey = `merchantIdCache`;
+
+/** merchantId Cache */
+let merchantIdCache: {
+    [walletAddress: string]: {
+        [chain: string]: string
+    }
+} = readCache(merchantIdCacheKey);
+
 const
-    /** merchantId Cache */
-    merchantIdCache: {
-        [walletAddress: string]: {
-            [chain: string]: string
-        }
-    } = (() => {
-        try {
-            return localStorage.merchantIdCache ?
-                JSON.parse(localStorage.merchantIdCache)
-                : {};
-        } catch (e) {
-            return {};
-        };
-    })(),
+    merchantIdCacheSave = (data: StringObjObj) => {
+        merchantIdCache = data;
+        saveCache(merchantIdCacheKey, data)
+    },
     /** Merchant Fee */
     merchantFee = async (
         chain: ChainIds,
@@ -65,9 +65,11 @@ const
         try {
             const
                 contract = await getContract(chain, true),
-                address = await getWalletAddress(chain) || `0x`,
-                merchantIdCached = merchantIdCache[address]?.[chain];
+                address = await getWalletAddress(chain) || `0x`;
 
+            // check cache
+            merchantIdCache[address] = merchantIdCache[address] || {};
+            const merchantIdCached = merchantIdCache[address][chain];
             if (merchantIdCached) {
                 const data = merchantIdCached;
                 return { success: true, data };
@@ -75,11 +77,8 @@ const
 
             const data = (await contract.getMerchantId())?.toString();
             if (typeof data != `string`) throw data
-            merchantIdCache[address] = merchantIdCache[address] || {};
             merchantIdCache[address][chain] = data;
-            try {
-                localStorage.merchantIdCache = JSON.stringify(merchantIdCache);
-            } catch (e) { };
+            merchantIdCacheSave(merchantIdCache);
             return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);

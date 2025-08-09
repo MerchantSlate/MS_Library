@@ -1,7 +1,7 @@
 import { ChainIds, EVMAddress, ErrorResponse, ResultPromise, StringObj, TransactionResponse } from "../types";
-declare const 
 /** Selected Chain */
-selectedChain: ChainIds, setSelectedChain: (chain: ChainIds) => void, 
+declare let selectedChain: ChainIds;
+declare const setSelectedChain: (chain: ChainIds) => void, 
 /** Zero Address */
 ZERO_ADDRESS: EVMAddress, 
 /** Contract Messages */

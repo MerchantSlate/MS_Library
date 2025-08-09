@@ -9,22 +9,19 @@ import {
     TransactionResponse
 } from "../types";
 import { getConfig } from "./config";
+import { readCache, saveCache } from "./cache";
+
+const selectedChainKey = `selectedChain`;
+
+/** Selected Chain */
+let selectedChain: ChainIds = readCache(selectedChainKey);
 
 const
-    /** Selected Chain */
-    selectedChain: ChainIds = (() => {
-        try {
-            return localStorage.selectedChain || `POLYGON`
-        } catch (e) {
-            return `POLYGON`
-        };
-    })(),
     setSelectedChain = (
         chain: ChainIds,
     ) => {
-        try {
-            localStorage.selectedChain = chain;
-        } catch (e) { };
+        selectedChain = chain;
+        saveCache(selectedChainKey, chain)
     },
     /** Zero Address */
     ZERO_ADDRESS = ZeroAddress as EVMAddress,

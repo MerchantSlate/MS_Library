@@ -1,24 +1,31 @@
 import { ZeroAddress } from "ethers";
-import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataRaw } from "../types";
+import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataExtendedObj, TokenDataRaw, TokenRateObj } from "../types";
+import { readCache, saveCache } from "./cache";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS } from "./contract";
 import { decimalFactor, divideNumbers, getContract } from "./methods";
 
 const
+    tokensDataKey = `tokensData`,
+    tokensRateKey = `tokensRate`;
+
+let
     /** Tokens Data Cache */
-    tokensDataCache: {
-        [chain: string]: {
-            [token: string]: TokenDataExtended
-        }
-    } = (() => {
-        try {
-            return localStorage.tokensDataCache ?
-                JSON.parse(localStorage.tokensDataCache)
-                : {};
-        } catch (e) {
-            return {};
-        };
-    })(),
+    tokensDataCache: TokenDataExtendedObj = readCache(tokensDataKey),
+    /** Tokens Rate Cache */
+    tokensRateCache: TokenRateObj = readCache(tokensRateKey);
+
+const
+    tokenDataLimit = 36e5 * 5,
+    setTokensDataCache = (data: TokenDataExtendedObj) => {
+        tokensDataCache = data;
+        saveCache(tokensDataKey, data);
+    },
+    tokenRateLimit = 6e4,
+    setTokensRateCache = (data: TokenRateObj) => {
+        tokensRateCache = data;
+        saveCache(tokensRateKey, data);
+    },
     /** Token Data Convert */
     tokenDataConvert = (
         chain: ChainIds,
@@ -86,8 +93,11 @@ const
 
             // check cached
             tokensDataCache[chain] = tokensDataCache[chain] || {};
-            if (tokensDataCache[chain][tokenAddress])
-                return tokensDataCache[chain][tokenAddress];
+            const cached = tokensDataCache[chain][tokenAddress];
+            if (
+                cached?.updateTime
+                && cached.updateTime > (Date.now() - tokenDataLimit)
+            ) return cached.data;
 
             const
                 nativeToken = getChainsData()[chain].nativeCurrency,
@@ -120,10 +130,11 @@ const
                     ...onchainData,
                     logo,
                 };
-                tokensDataCache[chain][tokenAddress] = tokenDataObj;
-                try {
-                    localStorage.tokensDataCache = JSON.stringify(tokensDataCache);
-                } catch (e) { };
+                tokensDataCache[chain][tokenAddress] = {
+                    updateTime: Date.now(),
+                    data: tokenDataObj,
+                };
+                setTokensDataCache(tokensDataCache);
                 return tokenDataObj
             };
         } catch (error: any) {
@@ -143,6 +154,17 @@ const
         referenceDecimals?: number,
     }): Promise<string> => {
         try {
+
+            // check cached
+            tokensRateCache[chain] = tokensRateCache[chain] || {};
+            const
+                rateKey = `${tokenAddress}_${referenceAddress || ``}`,
+                cached = tokensRateCache[chain][rateKey];
+            if (
+                cached?.updateTime
+                && cached.updateTime > (Date.now() - tokenRateLimit)
+            ) return cached.data;
+
             const
                 contract = await getContract(chain),
                 USDT = getChainsData()?.[chain]?.USDT,
@@ -159,8 +181,14 @@ const
                         referenceBaseWei,
                         referenceAddress || USDT?.address
                     )
-                )?.toString();
-            return divideNumbers(rateWei, referenceBaseWei);
+                )?.toString(),
+                rate = divideNumbers(rateWei, referenceBaseWei);
+            tokensRateCache[chain][rateKey] = {
+                updateTime: Date.now(),
+                data: rate,
+            };
+            setTokensRateCache(tokensRateCache);
+            return rate
         } catch (e) {
             return ``
         };

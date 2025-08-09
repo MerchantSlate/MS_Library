@@ -207,7 +207,7 @@ const
                 tokenAddress = product.token,
                 weiAmount = product.amount,
                 allData = await Promise.all([
-                    tokenOnchainData(chain, tokenAddress),
+                    getTokenData(chain, tokenAddress, true),
                     getTokenRate({ chain, tokenAddress })
                 ]),
                 token = allData[0] || {} as TokenData,

@@ -1,4 +1,6 @@
-# MerchantSlate - onchain crypto payment database
+# MerchantSlate SDK - onchain crypto payment database
+
+[Change Log](changes.md)
 
 ## Contract Deployed
 Contract is currently deployed to 7 EVM chains
@@ -9,7 +11,7 @@ Install using `yarn add merchantslate` or `npm install merchantslate`
 
 OR use in browsers through CDN
 
-`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.5.6/dist/browser/merchant.min.js"></script>`
+`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.5.7/dist/browser/merchant.min.js"></script>`
 
 Note: Public RPCs obtained from https://chainlist.org/ are used as default for development only and should be updated using `config`
 

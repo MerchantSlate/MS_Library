@@ -4,7 +4,7 @@ declare const configLargeSuffix: ({ millions, billions, }: {
     billions?: string;
 }) => void, 
 /** Process Number */
-processNumbers: (rawInput: number | string, roundingLimit?: number) => string, 
+processNumbers: (rawInput: number | string | bigint, roundingLimit?: number) => string, 
 /** AM/PM time = 00:00AM */
 timeAMPM: (timeInput: string | number | Date) => string, 
 /** Day Month Year = 23 June 2022 */

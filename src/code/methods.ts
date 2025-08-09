@@ -19,8 +19,32 @@ import { errorResponse, processTxHash } from "./contract";
 
 const
     /** Get BigNumbers */
-    decimalFactor = (decimals: number) =>
+    decimalFactor = (decimals: number | string | bigint) =>
         10n ** toBigInt(decimals),
+    /** Multiply Numbers */
+    multiplyNumbers = (
+        a: number | string | bigint,
+        b: number | string | bigint,
+    ): string => {
+        try {
+            const value = toBigInt(a) * toBigInt(b);
+            return value?.toString();
+        } catch {
+            return `0`
+        };
+    },
+    /** Divide Numbers */
+    divideNumbers = (
+        a: number | string | bigint,
+        b: number | string | bigint,
+    ): string => {
+        try {
+            const value = toBigInt(a) / toBigInt(b);
+            return value?.toString();
+        } catch {
+            return `0`
+        };
+    },
     /** Integer Number string */
     integerString = (
         value: number,
@@ -209,6 +233,9 @@ const
     };
 
 export {
+    decimalFactor,
+    multiplyNumbers,
+    divideNumbers,
     integerString,
     toWei,
     fromWei,

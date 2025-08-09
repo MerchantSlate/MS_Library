@@ -135,7 +135,7 @@ interface Product {
 interface ProductExtended {
     product: Product;
     token: TokenData;
-    usdValue: number;
+    usdValue: string;
 }
 interface ProductRaw {
     /** id */

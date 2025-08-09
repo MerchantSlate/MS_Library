@@ -2,7 +2,7 @@ import { ZeroAddress } from "ethers";
 import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataRaw } from "../types";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS } from "./contract";
-import { getContract, toWei } from "./methods";
+import { decimalFactor, divideNumbers, getContract } from "./methods";
 
 const
     /** Tokens Data Cache */
@@ -130,39 +130,39 @@ const
             return
         };
     },
-    /** Token Rate (Default USDT) */
+    /** Token Rate in Ref. Token (Default Ref.: USDT) */
     getTokenRate = async ({
         chain,
         tokenAddress,
-        weiAmount,
         referenceAddress,
         referenceDecimals,
     }: {
         chain: ChainIds,
         tokenAddress: EVMAddress,
-        weiAmount: string,
         referenceAddress?: EVMAddress,
         referenceDecimals?: number,
-    }) => {
+    }): Promise<string> => {
         try {
             const
                 contract = await getContract(chain),
-                USDT = getChainsData()[chain]?.USDT,
-                rate = (
+                USDT = getChainsData()?.[chain]?.USDT,
+                referenceBaseWei = decimalFactor(
+                    referenceAddress ? (referenceDecimals || 18)
+                        : USDT?.decimals
+                )?.toString(),
+                rateWei = (
                     await contract.tokenRate(
                         // optimism exception - wrapped ETH address
                         chain == `OPTIMISM` && tokenAddress == ZERO_ADDRESS ?
                             `0x4200000000000000000000000000000000000006`
                             : tokenAddress,
-                        weiAmount,
+                        referenceBaseWei,
                         referenceAddress || USDT?.address
                     )
-                )?.toString(),
-                decimals = chain == `BSC` ? 18 // BNB Smart Chain exception
-                    : (referenceDecimals || USDT?.decimals);
-            return +rate / +toWei(`1`, decimals)
+                )?.toString();
+            return divideNumbers(rateWei, referenceBaseWei);
         } catch (e) {
-            return
+            return ``
         };
     };
 

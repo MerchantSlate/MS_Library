@@ -16,7 +16,8 @@ const
         if (billions) largeSuffix.billions;
     },
     /** Process Number */
-    processNumbers = (rawInput: number | string, roundingLimit = 3) => {
+    processNumbers = (rawInput: number | string | bigint, roundingLimit = 3) => {
+        rawInput = rawInput?.toString();
         const checkNumber = Number(rawInput);
         if (!rawInput || !checkNumber) return `${rawInput || ``}`;
         const

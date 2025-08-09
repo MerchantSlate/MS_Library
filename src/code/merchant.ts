@@ -1,7 +1,7 @@
 import { ChainIds, ResultPromise } from "../types";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
-import { fromWei, getContract, getWalletAddress } from "./methods";
+import { fromWei, getContract, getWalletAddress, multiplyNumbers } from "./methods";
 import { processNumbers } from "./showcase";
 import { getTokenRate } from "./token";
 
@@ -46,13 +46,13 @@ const
                 symbol = getChainsData()[chain]?.nativeCurrency?.symbol,
                 value = merchantFeeRes.data,
                 weiAmount = value?.toString(),
-                amount = fromWei(weiAmount || `0`, 18),
-                usdValue = await getTokenRate({
+                coinAmount = fromWei(weiAmount || `0`, 18),
+                usdRate = await getTokenRate({
                     chain,
                     tokenAddress: ZERO_ADDRESS,
-                    weiAmount,
-                }) || 0,
-                data = `${symbol} ${processNumbers(amount)} ~ $${processNumbers(usdValue)}`;
+                }) || `0`,
+                usdValue = multiplyNumbers(usdRate, coinAmount),
+                data = `${symbol} ${processNumbers(coinAmount)} ~ $${processNumbers(usdValue)}`;
             return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);

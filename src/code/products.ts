@@ -15,7 +15,7 @@ import {
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS, errorResponse, processTxHash } from "./contract";
 import { getMerchantId } from "./merchant";
-import { fromWei, getContract, toWei } from "./methods";
+import { fromWei, getContract, multiplyNumbers, toWei } from "./methods";
 import { paginationData, processNumbers } from "./showcase";
 import { getTokenData, getTokenRate, tokenOnchainData } from "./token";
 
@@ -46,13 +46,13 @@ const
                 value = productFeeRes?.data,
                 symbol = getChainsData()[chain]?.nativeCurrency?.symbol,
                 weiAmount = value?.toString(),
-                amount = fromWei(weiAmount || `0`, 18),
-                usdValue = await getTokenRate({
+                coinAmount = fromWei(weiAmount || `0`, 18),
+                usdRate = await getTokenRate({
                     chain,
                     tokenAddress: ZERO_ADDRESS,
-                    weiAmount,
-                }) || 0,
-                data = `${symbol} ${processNumbers(amount)} ~ $${processNumbers(usdValue)}`;
+                }),
+                usdValue = multiplyNumbers(usdRate, coinAmount),
+                data = `${symbol} ${processNumbers(coinAmount)} ~ $${processNumbers(usdValue)}`;
             return { success: true, data };
         } catch (error: any) {
             return errorResponse(error);
@@ -208,10 +208,12 @@ const
                 weiAmount = product.amount,
                 allData = await Promise.all([
                     tokenOnchainData(chain, tokenAddress),
-                    getTokenRate({ chain, tokenAddress, weiAmount })
+                    getTokenRate({ chain, tokenAddress })
                 ]),
                 token = allData[0] || {} as TokenData,
-                usdValue = allData[1] || 0,
+                coinAmount = fromWei(weiAmount, token.decimals),
+                usdRate = allData[1],
+                usdValue = multiplyNumbers(usdRate, coinAmount),
                 data = {
                     product,
                     token,

@@ -163,6 +163,7 @@ const
             if (
                 cached?.updateTime
                 && cached.updateTime > (Date.now() - tokenRateLimit)
+                && +cached.data
             ) return cached.data;
 
             const

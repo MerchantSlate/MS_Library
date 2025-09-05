@@ -1,11 +1,11 @@
-const
-    path = require(`path`),
-    webpack = require(`webpack`),
-    { CleanWebpackPlugin } = require(`clean-webpack-plugin`),
-    TerserPlugin = require(`terser-webpack-plugin`);
+import path from 'path';
+import webpack, { Configuration } from 'webpack';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 
 // Common configuration
-const commonConfig = {
+const commonConfig: Configuration = {
     entry: `./src/index.ts`, // Entry point for your library
     resolve: {
         extensions: [`.ts`, `.js`], // Resolve .ts and .js files
@@ -22,7 +22,8 @@ const commonConfig = {
             },
         ],
     },
-    plugins: [
+    plugins: [ // @ts-ignore
+        new BundleAnalyzerPlugin(),
         new CleanWebpackPlugin(), // Clean output directory before each build
         new webpack.BannerPlugin({
             banner: `/*! MIT License. MerchantSlate Contract SDK. https://opensource.org/licenses/MIT */`,

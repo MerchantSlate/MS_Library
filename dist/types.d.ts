@@ -226,18 +226,15 @@ interface NativeCoin {
     symbol: string;
     decimals: number;
 }
-interface SupportedChainsData {
-    ETH: BlockchainNetwork;
-    APT: BlockchainNetwork;
-    BSC: BlockchainNetwork;
-    POLYGON: BlockchainNetwork;
-    AVALANCHE: BlockchainNetwork;
-    FANTOM: BlockchainNetwork;
-    ARBITRUM: BlockchainNetwork;
-    OPTIMISM: BlockchainNetwork;
-    CELO: BlockchainNetwork;
-}
-type ChainIds = keyof SupportedChainsData;
+/** Supported Chains List */
+declare const SUPPORTED_CHAINS: readonly ["ETH", "APT", "BSC", "POLYGON", "AVALANCHE", "FANTOM", "ARBITRUM", "OPTIMISM", "CELO"];
+/** Chain Ids */
+type ChainIds = typeof SUPPORTED_CHAINS[number];
+/** Chain Ids Enum */
+declare const ChainIdsEnum: { [K in ChainIds]: K; };
+type SupportedChainsData = {
+    [key in ChainIds]: BlockchainNetwork;
+};
 interface Signature {
     _type: string;
     networkV: number | null;
@@ -337,26 +334,9 @@ interface StakeOffered {
 interface StakeOffers {
     [offerId: string]: StakeOffered;
 }
-interface MerchantRPCs {
-    /** ARBITRUM RPC URL */
-    ARBITRUM_RPC?: string;
-    /** AVALANCHE RPC URL */
-    AVALANCHE_RPC?: string;
-    /** APT RPC URL */
-    APT_RPC?: string;
-    /** BSC RPC URL */
-    BSC_RPC?: string;
-    /** CELO RPC URL */
-    CELO_RPC?: string;
-    /** ETH RPC URL */
-    ETH_RPC?: string;
-    /** FANTOM RPC URL */
-    FANTOM_RPC?: string;
-    /** OPTIMISM RPC URL */
-    OPTIMISM_RPC?: string;
-    /** POLYGON RPC URL */
-    POLYGON_RPC?: string;
-}
+type MerchantRPCs = {
+    [K in ChainIds as `${K}_RPC`]?: string;
+};
 interface MerchantConfigParams extends MerchantRPCs {
     /** browser extension wallet */
     browserWallet?: string;
@@ -392,10 +372,14 @@ StringObj,
 StringObjObj, 
 /** EVM address string */
 EVMAddress, 
+/** Supported Chains List */
+SUPPORTED_CHAINS, 
+/** Supported Chains Type */
+ChainIds, 
+/** Chain Ids Enum */
+ChainIdsEnum, 
 /** supported chains data object */
 SupportedChainsData, 
-/** supported chains type */
-ChainIds, 
 /** contract functions */
 ContractFunctions, 
 /** token data (contract response) */

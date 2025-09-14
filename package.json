@@ -1,6 +1,6 @@
 {
   "name": "merchantslate",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "main": "dist/node/merchant.node.min.js",
   "module": "dist/node/merchant.node.min.js",
   "browser": "dist/browser/merchant.min.js",
@@ -26,6 +26,7 @@
   "description": "MerchantSlate is the onchain crypto payment database",
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/webpack-bundle-analyzer": "^4.7.0",
     "clean-webpack-plugin": "^4.0.0",
     "esbuild": "^0.24.2",
     "terser-webpack-plugin": "^5.3.11",
@@ -33,14 +34,13 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
     "webpack": "^5.97.1",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"
   },
   "dependencies": {
-    "@types/webpack-bundle-analyzer": "^4.7.0",
     "ethers": "^6.13.4",
-    "node-fetch": "^3.3.2",
-    "webpack-bundle-analyzer": "^4.10.2"
+    "node-fetch": "^3.3.2"
   },
   "files": [
     "dist/"

@@ -1,5 +1,6 @@
 # MerchantSlate SDK - onchain crypto payment database
 
+## Change Log
 [Change Log](changes.md)
 
 ## Contract Deployed
@@ -10,250 +11,357 @@ Contract is currently deployed to 7 EVM chains
 This package is implemented at merchantslate.com
 [Example Website Repo](https://github.com/MerchantSlate/MS_Website)
 
+---
+
 ## Setup
 Install using `yarn add merchantslate` or `npm install merchantslate` 
 
 OR use in browsers through CDN
 
-`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.6/dist/browser/merchant.min.js"></script>`
+```html
+<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.7/dist/browser/merchant.min.js"></script>
+```
 
-Note `merchant` is the browser global object for this library functions
+Note `merchant` is the browser global object for this library functions.
+
+### Config
+Accepts a `MerchantConfigParams` object (RPC urls, private key/seed, suffixes, contract address)
 
 Note: Public RPCs obtained from https://chainlist.org/ are used as default for development only and should be updated using `config`
 
 ```typescript
-// if using CDN use "merchant.config"
 config({
-    /** wallet private key (optional) used if no wallet can be connected in the setup environment */
-    walletPrivateKey:``,
-    /**
-    * wallet seed phrase (optional) used if no wallet can be connected in the setup environment
-    * cannot be used if private key is defined
-    */
-    walletSeedPhrase:``,
-
-    /** ARBITRUM RPC URL */
-    ARBITRUM_RPC:``,
-    /** AVALANCHE RPC URL */
-    AVALANCHE_RPC:``,
-    /** APT RPC URL */
-    APT_RPC:``,
-    /** BSC RPC URL */
-    BSC_RPC:``,
-    /** CELO RPC URL */
-    CELO_RPC:``,
-    /** ETH RPC URL */
-    ETH_RPC:``,
-    /** FANTOM RPC URL */
-    FANTOM_RPC:``,
-    /** OPTIMISM RPC URL */
-    OPTIMISM_RPC:``,
-    /** POLYGON RPC URL */
-    POLYGON_RPC:``,
-
-    /** billion number suffix */
-    billionSuffix: ``,
-    /** million number suffix */
-    millionSuffix: ``,
-
-    /** MerchantSlate Contract Address (does not require change) */
-    merchantSlateContract:``,
+  /** wallet private key (optional) used if no wallet can be connected in the setup environment */
+  walletPrivateKey?: string,
+  /**
+   * wallet seed phrase (optional) used if no wallet can be connected in the setup environment
+   * cannot be used if private key is defined
+   */
+  walletSeedPhrase?: string,
+  /** BSC RPC URL (same for any other chain) all chains list available as SUPPORTED_CHAINS */
+  BSC_RPC: string,
+  /** billion number suffix */
+  billionSuffix?: string,
+  /** million number suffix */
+  millionSuffix?: string,
+  /** MerchantSlate Contract Address (does not require change) */
+  merchantSlateContract?: string,
 })
 ```
 
-## Merchant Setup
+### Get Chains Data
+Returns data of supported chains (`BlockchainNetwork` type)
+```typescript
+getChainsData(): BlockchainNetwork[]
+```
+
+### Get Config
+Returns the current configuration object
+```typescript
+getConfig(): MerchantConfigParams
+```
+
+### Selected Chain
+The currently selected chain ID
+```typescript
+selectedChain: ChainIds
+```
+
+### Set Selected Chain
+Sets the selected chain
+```typescript
+setSelectedChain(chain: ChainIds): void
+```
+
+### Zero Address
+The zero address constant
+```typescript
+ZERO_ADDRESS: EVMAddress
+```
+
+### Contract Errors
+Object of possible error codes / messages from smart contract
+```typescript
+contractErrors: Record<string, string>
+```
+
+---
+
+## Wallet Methods
+
+### Browser Wallet
+Returns the connected browser wallet signer or null
+```typescript
+getBrowserWallet(): Promise<Signer | null>
+```
+
+### Setup Provider
+Returns the ethers provider based on the configuration
+```typescript
+getProvider(): Provider
+```
+
+### Contract Object
+Returns the contract instance connected to the current chain
+```typescript
+getContract(): Contract
+```
+
+### Wallet Address
+Returns address of connected wallet (if any)
+```typescript
+getWalletAddress(): Promise<string | null>
+```
+
+---
+
+## Token
+
+### Get Token Data
+Gets on-chain token metadata (symbol, name, decimals etc.)
+```typescript
+getTokenData(tokenAddress: EVMAddress, chain: ChainIds): Promise<TokenData>
+```
+
+### Token Onchain Data
+Maybe similar but includes additional data (e.g. balances?)
+```typescript
+tokenOnchainData(tokenAddress: EVMAddress, chain: ChainIds): Promise<OnchainTokenData>
+```
+
+### Get Token Rate
+Gets current rate / price of token in some unit or relative value
+```typescript
+getTokenRate(tokenAddress: EVMAddress, chain: ChainIds): Promise<number>
+```
+
+---
+
+## Merchant
 
 ### Merchant Fee
-Text string showing value of merchant setup fee for a specific chain
+Fee required to register as merchant on given chain (in wei or string)
 ```typescript
-const feeValueText: string = await merchantFeeValueText(
-    chain: ChainIds,
-);
+merchantFee(chain: ChainIds): Promise<string>
+```
+
+### Merchant Fee Value Text
+Same as merchantFee but formatted as human readable text
+```typescript
+merchantFeeValueText(chain: ChainIds): Promise<string>
 ```
 
 ### Merchant Signup
 Initiate merchant signup transaction
 ```typescript
-const data: {
-    hash?: string,
-    merchantId?: string
-} = await merchantSignup(
-    chain: ChainIds,
-);
+merchantSignup(chain: ChainIds): Promise<{ hash?: string; merchantId?: string }>
 ```
 
-### Merchant Id
-Get merchant Id of connected wallet
+### Get Merchant Id
+Get merchant id of connected wallet
 ```typescript
-const merchantId: string = await getMerchantId(
-    chain: ChainIds,
-);
+getMerchantId(chain: ChainIds): Promise<string>
 ```
 
-## Products Management
+---
 
-### Load Products
-List all products limited by pagination parameters
-Use `isMerchantOnly` to limit products loaded to ones of merchant wallet connected
-```typescript
-const data: {
-    productsData: ProductData
-} = await loadProducts({
-    chain: ChainIds,
-    pageNo: string,
-    pageSize: string,
-    isMerchantOnly?: boolean,
-});
-```
+## Products
 
 ### Product Fee
-Product fee value text, for fee required by contract to add products
+Fee to add product on given chain
 ```typescript
-const feeText: string = await productFeeText(
-    chain: ChainIds,
-);
+productFee(chain: ChainIds): Promise<string>
+```
+
+### Product Fee Text
+Product fee formatted as text
+
+```typescript
+productFeeText(chain: ChainIds): Promise<string>
+```
+
+### Add Product
+Add or update product details
+```typescript
+addProduct(params: { chain: ChainIds; productPrice: string; tokenAddress?: EVMAddress; quantity?: string; commissionAddress?: string; commissionPercentage?: string; productId?: string; }): Promise<{ hash: string; productId: string; isNew: boolean }>
 ```
 
 ### Update Product
-Product update using product id and new details to replace old ones, do not define quantity for unlimited quantity
+Update existing product
 ```typescript
-const data: {
-    hash: string,
-    productId: string,
-    isNew: boolean
-} = await updateProduct({
-    productId?: string,
-    chain: ChainIds,
-    productPrice: string,
-    tokenAddress?: EVMAddress,
-    quantity?: string,
-    commissionAddress?: string,
-    commissionPercentage?: string,
-});
+updateProduct(params: { ...similar to addProduct }): Promise<{ hash: string; productId: string; isNew: boolean }>
 ```
 
 ### Delete Product
-Product delete transaction
+Delete a product; returns transaction hash
 ```typescript
-const txHash: string = await deleteProduct(
-    chain: ChainIds,
-    productId: string,
-);
+deleteProduct(chain: ChainIds, productId: string): Promise<string>
 ```
 
-## Payments Management
+### Get Products
+Fetch products with optional pagination / filter
+```typescript
+getProducts(chain: ChainIds, pageNo?: string, pageSize?: string, isMerchantOnly?: boolean): Promise<ProductDataAll>
+```
+
+### Get Product Details
+Get all data for a single product
+```typescript
+getProductDetails(chain: ChainIds, productId: string): Promise<ProductData>
+```
+
+### Load Products
+Similar to getProducts but wrapped for UI loading etc.
+```typescript
+loadProducts(params: { chain: ChainIds; pageNo: string; pageSize: string; isMerchantOnly?: boolean }): Promise<{ productsData: ProductDataAll }>
+```
+
+---
+
+## Payments
+
+### Get Payments
+Fetch payments with pagination and optional filters
+```typescript
+getPayments(chain: ChainIds, pageNo?: string, pageSize?: string, isMerchantOnly?: boolean, buyerWallet?: EVMAddress): Promise<{ currentPage: string; previousPage?: string; nextPage?: string; totalPages: string; paymentsData: PaymentDataAll }>
+```
 
 ### Load Payments
-List all payments limited by pagination parameters
-Use `isMerchantOnly` to limit products loaded to ones of merchant wallet connected
-Use `buyerWallet` to limit products loaded to ones made from a specific wallet
+Same as getPayments but wrapped for UI
 ```typescript
-const data: {
-    currentPage: string;
-    previousPage?: string;
-    nextPage?: string;
-    totalPages: string;
-    paymentsData: PaymentData[];
-} = await loadPayments({
-    chain,
-    pageNo,
-    pageSize,
-    isMerchantOnly: isMerchantPayments,
-    buyerWallet: onlyMyPayments ? await getWalletAddress(chain) : undefined,
-});
+loadPayments(params: { chain: ChainIds; pageNo: string; pageSize: string; isMerchantOnly: boolean; buyerWallet?: EVMAddress; }): Promise<{ currentPage: string; previousPage?: string; nextPage?: string; totalPages: string; paymentsData: PaymentDataAll }>
 ```
 
-### Payment Details
-Payment details as text including payment value
+### Pay Product
+Initiate payment transaction
 ```typescript
-const valueText = await payValueText(
-    chain: ChainIds,
-    product: ProductChain,
-    quantity ?: string = `1`,
-);
+payProduct(chain: ChainIds, product: ProductChain, quantity?: string): Promise<{ hash?: string; paymentId?: string }>
 ```
 
-### Payment Transaction
-Initiate payment transaction using connected wallet
+### Pay Value Text
+Payment value converted to human readable text
 ```typescript
-const data: {
-    hash?: string,
-    paymentId?: string,
-} = await payProduct(
-    chain: ChainIds,
-    product: ProductChain,
-    quantity ?: string = `1`,
-);
+payValueText(chain: ChainIds, product: ProductChain, quantity?: string): Promise<string>
 ```
 
-## Stakes Management
+### Pay Txs
+Fetch transaction details for a list of payment IDs
+```typescript
+payTxs(chain: ChainIds, paymentIds: string[]): Promise<any[]>
+```
+
+### Pay Validation
+Validate that payment inputs are acceptable etc.
+```typescript
+payValidation(chain: ChainIds, product: ProductChain, quantity?: string): Promise<boolean>
+```
+
+---
+
+## Stakes
+
+### Total Stakes
+Returns total stake units/stake count on the contract
+
+```typescript
+totalStakes(chain: ChainIds): Promise<number>
+```
+
+### Stakes Count
+Returns count of stakes held by wallet + offered stakes
+```typescript
+stakesCount(chain: ChainIds): Promise<{ holdings: number; offered: number }>
+```
 
 ### Offer Stake
-Owners of the contract stake can offer stakes for public purchase on-chain
+Owners offer stakes for public purchase
 ```typescript
-const txHash: string = await offerStake(
-    chain: ChainIds,
-    stakeUnits: string,
-    totalValueWei: string,
-);
+offerStake(chain: ChainIds, stakeUnits: string, totalValueWei: string): Promise<string>
+```
+
+### Stakes Offered
+Get list of stake offers; optionally only for connected wallet
+```typescript
+stakesOffered(chain: ChainIds, walletOnly?: boolean): Promise<{ listedStakes: StakeOffers; holderOffersCount: number }>
 ```
 
 ### Transfer Stake
-Owners of the contract stake can transfer stakes
+Transfer stakes to someone else
 ```typescript
-const txHash: string = await transferStake(
-    chain: ChainIds,
-    stakeUnits: string,
-    recipientAddress: EVMAddress,
-);
+transferStake(chain: ChainIds, stakeUnits: string, recipientAddress: EVMAddress): Promise<string>
 ```
 
 ### Take Stake
-Any wallet can take an offered stake using the offer id. This initiates a transaction to take the stake.
+Take an existing stake offer by id
 ```typescript
-const txHash: string = await takeStake(
-    chain: ChainIds,
-    offerId: string,
-);
+takeStake(chain: ChainIds, offerId: string): Promise<string>
 ```
 
-## Remove Stake
-Owners can remove their stake previously offered
+### Remove Stake Offer
+Remove a previously created stake offer
 ```typescript
-const txHash: string = await removeStakeOffer(
-    chain: ChainIds,
-    offerId: string,
-);
+removeStakeOffer(chain: ChainIds, offerId: string): Promise<string>
 ```
 
-## Total Stakes
-Get Total number of contract stakes
+---
+
+## General Methods
+
+### Integer String
+Normalize number/string into integer string (no decimals)
 ```typescript
-const stakesTotal: number = await totalStakes(
-    chain: ChainIds,
-);
+integerString(num: string | number): string
 ```
 
-## Stakes Count
-Get Total number of stakes held by connected wallet and their status
+### To Wei
+Convert from units to Wei (or smallest unit)
 ```typescript
-const data: {
-    holdings: number,
-    offered: number,
-} = await stakesCount(
-    chain: ChainIds,
-);
+toWei(amount: string, decimals?: number): string
 ```
 
-## Stakes Offered
-Get list offered on a specific chain
-Use `wallet` boolean to show only stakes related to connected wallet
+### From Wei
+Convert from Wei to human readable units
 ```typescript
-const data: {
-    listedStakes: StakeOffers,
-    holderOffersCount: number,
-} = await stakesOffered(
-    chain: ChainIds,
-    wallet?: boolean,
-);
+fromWei(amount: string, decimals?: number): string
 ```
+
+### Process Numbers
+Format numbers suitably (commas etc.)
+```typescript
+processNumbers(input: number | string): string
+```
+
+### Time AMPM
+Format a timestamp into human‐readable AM/PM time
+```typescript
+timeAMPM(timestamp: number | string): string
+```
+
+### Full Date Text
+Format into full date string (day, month, year etc.)
+```typescript
+fullDateText(timestamp: number | string): string
+```
+
+### Truncate Text
+Shorten text with ellipsis etc.
+```typescript
+truncateText(text: string, length: number): string
+```
+
+---
+
+## Important Types
+
+Here are major types exported:
+
+* `BlockchainNetwork` — info about chain (name, chainId, etc.)
+* `ChainIds` — supported chain IDs type
+* `ChainIdsEnum` — supported chain IDs enum
+* `EVMAddress` — string type representing valid Ethereum‐style address
+* `ErrorResponse` — structure returned when some contract interaction fails
+* `MerchantConfigParams` — config input object (RPCs, keys, suffixes, etc.)
+* `PayTxsData` — data returned by `payTxs`
+* `Payment, PaymentChain, PaymentData, PaymentDataAll` — various payment data shapes
+* `ProductChain, ProductData, ProductDataAll` — product data shapes
+* `TxObj` — transaction object type

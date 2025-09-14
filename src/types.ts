@@ -296,19 +296,31 @@ interface NativeCoin {
     decimals: number;
 }
 
-interface SupportedChainsData {
-    ETH: BlockchainNetwork,
-    APT: BlockchainNetwork,
-    BSC: BlockchainNetwork,
-    POLYGON: BlockchainNetwork,
-    AVALANCHE: BlockchainNetwork,
-    FANTOM: BlockchainNetwork,
-    ARBITRUM: BlockchainNetwork,
-    OPTIMISM: BlockchainNetwork,
-    CELO: BlockchainNetwork,
-}
+/** Supported Chains List */
+const SUPPORTED_CHAINS = [
+    `ETH`,
+    `APT`,
+    `BSC`,
+    `POLYGON`,
+    `AVALANCHE`,
+    `FANTOM`,
+    `ARBITRUM`,
+    `OPTIMISM`,
+    `CELO`,
+] as const;
 
-type ChainIds = keyof SupportedChainsData;
+/** Chain Ids */
+type ChainIds = typeof SUPPORTED_CHAINS[number];
+
+/** Chain Ids Enum */
+const ChainIdsEnum = Object.fromEntries(
+    SUPPORTED_CHAINS.map(c => [c, c])
+) as { [K in ChainIds]: K };
+
+type SupportedChainsData = {
+    /** Chain Data Object */
+    [key in ChainIds]: BlockchainNetwork;
+};
 
 interface Signature {
     _type: string;
@@ -420,26 +432,9 @@ interface StakeOffers {
     [offerId: string]: StakeOffered
 }
 
-interface MerchantRPCs {
-    /** ARBITRUM RPC URL */
-    ARBITRUM_RPC?: string,
-    /** AVALANCHE RPC URL */
-    AVALANCHE_RPC?: string,
-    /** APT RPC URL */
-    APT_RPC?: string,
-    /** BSC RPC URL */
-    BSC_RPC?: string,
-    /** CELO RPC URL */
-    CELO_RPC?: string,
-    /** ETH RPC URL */
-    ETH_RPC?: string,
-    /** FANTOM RPC URL */
-    FANTOM_RPC?: string,
-    /** OPTIMISM RPC URL */
-    OPTIMISM_RPC?: string,
-    /** POLYGON RPC URL */
-    POLYGON_RPC?: string,
-}
+type MerchantRPCs = {
+    [K in ChainIds as `${K}_RPC`]?: string;
+};
 
 interface MerchantConfigParams extends MerchantRPCs {
     /** browser extension wallet */
@@ -484,10 +479,17 @@ export {
     /** EVM address string */
     EVMAddress,
 
+    /** Supported Chains List */
+    SUPPORTED_CHAINS,
+
+    /** Supported Chains Type */
+    ChainIds,
+
+    /** Chain Ids Enum */
+    ChainIdsEnum,
+
     /** supported chains data object */
     SupportedChainsData,
-    /** supported chains type */
-    ChainIds,
 
     /** contract functions */
     ContractFunctions,

@@ -112,7 +112,7 @@ const
             if (!getConfig().browserWallet) {
                 const
                     addresses = await provider.send(`eth_accounts`, []),
-                    address = addresses?.[0];
+                    address: string = addresses?.[0];
                 if (address) config({
                     browserWallet: address
                 });

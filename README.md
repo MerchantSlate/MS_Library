@@ -1,10 +1,11 @@
 # MerchantSlate SDK - onchain crypto payment database
+MerchantSlate SDK is a TypeScript library for on-chain crypto payment databases, supporting front-end and back-end solutions across popular EVM chains. It enables product management, payment processing, and utility functions like fetching live token rates and data (e.g., relative to USDT). Install via npm, yarn, or CDN, and customize with RPCs.
 
 ## Change Log
 [Change Log](changes.md)
 
 ## Contract Deployed
-Contract is currently deployed to 7 EVM chains
+Contract is currently deployed across popular EVM chains
 [More Info](https://github.com/MerchantSlate/Contract)
 
 ## Example Implementation
@@ -19,7 +20,7 @@ Install using `yarn add merchantslate` or `npm install merchantslate`
 OR use in browsers through CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.8/dist/browser/merchant.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.9/dist/browser/merchant.min.js"></script>
 ```
 
 Note `merchant` is the browser global object for this library functions.

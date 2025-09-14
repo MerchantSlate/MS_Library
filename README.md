@@ -19,7 +19,7 @@ Install using `yarn add merchantslate` or `npm install merchantslate`
 OR use in browsers through CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.7/dist/browser/merchant.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.8/dist/browser/merchant.min.js"></script>
 ```
 
 Note `merchant` is the browser global object for this library functions.
@@ -83,34 +83,6 @@ ZERO_ADDRESS: EVMAddress
 Object of possible error codes / messages from smart contract
 ```typescript
 contractErrors: Record<string, string>
-```
-
----
-
-## Wallet Methods
-
-### Browser Wallet
-Returns the connected browser wallet signer or null
-```typescript
-getBrowserWallet(): Promise<Signer | null>
-```
-
-### Setup Provider
-Returns the ethers provider based on the configuration
-```typescript
-getProvider(): Provider
-```
-
-### Contract Object
-Returns the contract instance connected to the current chain
-```typescript
-getContract(): Contract
-```
-
-### Wallet Address
-Returns address of connected wallet (if any)
-```typescript
-getWalletAddress(): Promise<string | null>
 ```
 
 ---
@@ -301,6 +273,34 @@ takeStake(chain: ChainIds, offerId: string): Promise<string>
 Remove a previously created stake offer
 ```typescript
 removeStakeOffer(chain: ChainIds, offerId: string): Promise<string>
+```
+
+---
+
+## Wallet Methods
+
+### Browser Wallet
+Returns the connected browser wallet signer or undefined
+```typescript
+getBrowserWallet(): Promise<Signer | undefined>
+```
+
+### Setup Provider
+Returns the ethers provider based on the configuration
+```typescript
+getProvider(): Provider
+```
+
+### Contract Object
+Returns the contract instance connected to the current chain
+```typescript
+getContract(): Contract
+```
+
+### Wallet Address
+Returns address of connected wallet (if any)
+```typescript
+getWalletAddress(): Promise<string | undefined>
 ```
 
 ---

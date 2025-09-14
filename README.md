@@ -1,18 +1,20 @@
 # MerchantSlate SDK - onchain crypto payment database
 MerchantSlate SDK is a TypeScript library for on-chain crypto payment databases, supporting front-end and back-end solutions across popular EVM chains. It enables product management, payment processing, and utility functions like fetching live token rates and data (e.g., relative to USDT). Install via npm, yarn, or CDN, and customize with RPCs.
 
+
 ## Change Log
 [Change Log](changes.md)
+
 
 ## Contract Deployed
 Contract is currently deployed across popular EVM chains
 [More Info](https://github.com/MerchantSlate/Contract)
 
+
 ## Example Implementation
 This package is implemented at merchantslate.com
 [Example Website Repo](https://github.com/MerchantSlate/MS_Website)
 
----
 
 ## Setup
 Install using `yarn add merchantslate` or `npm install merchantslate` 
@@ -20,7 +22,9 @@ Install using `yarn add merchantslate` or `npm install merchantslate`
 OR use in browsers through CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.9/dist/browser/merchant.min.js"></script>
+<script 
+  src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.9/dist/browser/merchant.min.js"
+></script>
 ```
 
 Note `merchant` is the browser global object for this library functions.
@@ -32,14 +36,19 @@ Note: Public RPCs obtained from https://chainlist.org/ are used as default for d
 
 ```typescript
 config({
-  /** wallet private key (optional) used if no wallet can be connected in the setup environment */
+  /** wallet private key (optional) 
+   * used if no wallet can be connected in the setup environment 
+   */
   walletPrivateKey?: string,
   /**
-   * wallet seed phrase (optional) used if no wallet can be connected in the setup environment
+   * wallet seed phrase (optional) 
+   * used if no wallet can be connected in the setup environment
    * cannot be used if private key is defined
    */
   walletSeedPhrase?: string,
-  /** BSC RPC URL (same for any other chain) all chains list available as SUPPORTED_CHAINS */
+  /** BSC RPC URL (same for any other chain)
+   * all chains list available as SUPPORTED_CHAINS 
+   */
   BSC_RPC: string,
   /** billion number suffix */
   billionSuffix?: string,
@@ -86,29 +95,36 @@ Object of possible error codes / messages from smart contract
 contractErrors: Record<string, string>
 ```
 
----
 
 ## Token
 
 ### Get Token Data
 Gets on-chain token metadata (symbol, name, decimals etc.)
 ```typescript
-getTokenData(tokenAddress: EVMAddress, chain: ChainIds): Promise<TokenData>
+getTokenData(
+  tokenAddress: EVMAddress,
+  chain: ChainIds
+): Promise<TokenData>
 ```
 
 ### Token Onchain Data
 Maybe similar but includes additional data (e.g. balances?)
 ```typescript
-tokenOnchainData(tokenAddress: EVMAddress, chain: ChainIds): Promise<OnchainTokenData>
+tokenOnchainData(
+  tokenAddress: EVMAddress,
+  chain: ChainIds
+): Promise<OnchainTokenData>
 ```
 
 ### Get Token Rate
 Gets current rate / price of token in some unit or relative value
 ```typescript
-getTokenRate(tokenAddress: EVMAddress, chain: ChainIds): Promise<number>
+getTokenRate(
+  tokenAddress: EVMAddress,
+  chain: ChainIds
+): Promise<number>
 ```
 
----
 
 ## Merchant
 
@@ -127,7 +143,9 @@ merchantFeeValueText(chain: ChainIds): Promise<string>
 ### Merchant Signup
 Initiate merchant signup transaction
 ```typescript
-merchantSignup(chain: ChainIds): Promise<{ hash?: string; merchantId?: string }>
+merchantSignup(
+  chain: ChainIds
+): Promise<{ hash?: string; merchantId?: string }>
 ```
 
 ### Get Merchant Id
@@ -136,7 +154,6 @@ Get merchant id of connected wallet
 getMerchantId(chain: ChainIds): Promise<string>
 ```
 
----
 
 ## Products
 
@@ -156,80 +173,165 @@ productFeeText(chain: ChainIds): Promise<string>
 ### Add Product
 Add or update product details
 ```typescript
-addProduct(params: { chain: ChainIds; productPrice: string; tokenAddress?: EVMAddress; quantity?: string; commissionAddress?: string; commissionPercentage?: string; productId?: string; }): Promise<{ hash: string; productId: string; isNew: boolean }>
+addProduct(params: { 
+  chain: ChainIds; 
+  productPrice: string;
+  tokenAddress?: EVMAddress;
+  quantity?: string; 
+  commissionAddress?: string; 
+  commissionPercentage?: string; 
+  productId?: string; 
+}): Promise<{ 
+  hash: string; 
+  productId: string; 
+  isNew: boolean 
+}>
 ```
 
 ### Update Product
 Update existing product
 ```typescript
-updateProduct(params: { ...similar to addProduct }): Promise<{ hash: string; productId: string; isNew: boolean }>
+updateProduct(params: { 
+  chain: ChainIds; 
+  productPrice: string;
+  tokenAddress?: EVMAddress;
+  quantity?: string; 
+  commissionAddress?: string; 
+  commissionPercentage?: string; 
+  productId?: string; 
+}): Promise<{ 
+  hash: string; 
+  productId: string; 
+  isNew: boolean 
+}>
 ```
 
 ### Delete Product
 Delete a product; returns transaction hash
 ```typescript
-deleteProduct(chain: ChainIds, productId: string): Promise<string>
+deleteProduct(
+  chain: ChainIds, 
+  productId: string
+): Promise<string>
 ```
 
 ### Get Products
 Fetch products with optional pagination / filter
 ```typescript
-getProducts(chain: ChainIds, pageNo?: string, pageSize?: string, isMerchantOnly?: boolean): Promise<ProductDataAll>
+getProducts(
+  chain: ChainIds, 
+  pageNo?: string, 
+  pageSize?: string, 
+  isMerchantOnly?: boolean
+): Promise<ProductDataAll>
 ```
 
 ### Get Product Details
 Get all data for a single product
 ```typescript
-getProductDetails(chain: ChainIds, productId: string): Promise<ProductData>
+getProductDetails(
+  chain: ChainIds, 
+  productId: string
+): Promise<ProductData>
 ```
 
 ### Load Products
 Similar to getProducts but wrapped for UI loading etc.
 ```typescript
-loadProducts(params: { chain: ChainIds; pageNo: string; pageSize: string; isMerchantOnly?: boolean }): Promise<{ productsData: ProductDataAll }>
+loadProducts(params: { 
+  chain: ChainIds; 
+  pageNo: string; 
+  pageSize: string; 
+  isMerchantOnly?: boolean 
+}): Promise<{ productsData: ProductDataAll }>
 ```
 
----
 
 ## Payments
 
 ### Get Payments
 Fetch payments with pagination and optional filters
 ```typescript
-getPayments(chain: ChainIds, pageNo?: string, pageSize?: string, isMerchantOnly?: boolean, buyerWallet?: EVMAddress): Promise<{ currentPage: string; previousPage?: string; nextPage?: string; totalPages: string; paymentsData: PaymentDataAll }>
+getPayments(
+  chain: ChainIds, 
+  pageNo?: string, 
+  pageSize?: string, 
+  isMerchantOnly?: boolean, 
+  buyerWallet?: EVMAddress
+): Promise<{ 
+  currentPage: string; 
+  previousPage?: string; 
+  nextPage?: string; 
+  totalPages: string; 
+  paymentsData: PaymentDataAll 
+}>
 ```
 
 ### Load Payments
 Same as getPayments but wrapped for UI
 ```typescript
-loadPayments(params: { chain: ChainIds; pageNo: string; pageSize: string; isMerchantOnly: boolean; buyerWallet?: EVMAddress; }): Promise<{ currentPage: string; previousPage?: string; nextPage?: string; totalPages: string; paymentsData: PaymentDataAll }>
+loadPayments(params: { 
+  chain: ChainIds; 
+  pageNo: string; 
+  pageSize: string; 
+  isMerchantOnly: boolean; 
+  buyerWallet?: EVMAddress; 
+}): Promise<{ 
+  currentPage: string; 
+  previousPage?: string; 
+  nextPage?: string; 
+  totalPages: string; 
+  paymentsData: PaymentDataAll 
+}>
 ```
 
 ### Pay Product
 Initiate payment transaction
 ```typescript
-payProduct(chain: ChainIds, product: ProductChain, quantity?: string): Promise<{ hash?: string; paymentId?: string }>
+payProduct(
+  chain: ChainIds, 
+  product: ProductChain, 
+  quantity?: string
+): Promise<{ 
+  hash?: string; 
+  paymentId?: string 
+}>
 ```
 
 ### Pay Value Text
 Payment value converted to human readable text
 ```typescript
-payValueText(chain: ChainIds, product: ProductChain, quantity?: string): Promise<string>
+payValueText(
+  chain: ChainIds, 
+  product: ProductChain, 
+  quantity?: string
+): Promise<string>
 ```
 
 ### Pay Txs
 Fetch transaction details for a list of payment IDs
 ```typescript
-payTxs(chain: ChainIds, paymentIds: string[]): Promise<any[]>
+payTxs(
+  chain: ChainIds, 
+  paymentIds: string[]
+): Promise<{
+  chainId: string,
+  token: TokenData,
+  amount: string,
+  txs: TxObj[]
+}>
 ```
 
 ### Pay Validation
 Validate that payment inputs are acceptable etc.
 ```typescript
-payValidation(chain: ChainIds, product: ProductChain, quantity?: string): Promise<boolean>
+payValidation(
+  chain: ChainIds, 
+  product: ProductChain, 
+  quantity?: string
+): Promise<boolean>
 ```
 
----
 
 ## Stakes
 
@@ -243,25 +345,44 @@ totalStakes(chain: ChainIds): Promise<number>
 ### Stakes Count
 Returns count of stakes held by wallet + offered stakes
 ```typescript
-stakesCount(chain: ChainIds): Promise<{ holdings: number; offered: number }>
+stakesCount(
+  chain: ChainIds
+): Promise<{ 
+  holdings: number; 
+  offered: number 
+}>
 ```
 
 ### Offer Stake
 Owners offer stakes for public purchase
 ```typescript
-offerStake(chain: ChainIds, stakeUnits: string, totalValueWei: string): Promise<string>
+offerStake(
+  chain: ChainIds, 
+  stakeUnits: string, 
+  totalValueWei: string
+): Promise<string>
 ```
 
 ### Stakes Offered
 Get list of stake offers; optionally only for connected wallet
 ```typescript
-stakesOffered(chain: ChainIds, walletOnly?: boolean): Promise<{ listedStakes: StakeOffers; holderOffersCount: number }>
+stakesOffered(
+  chain: ChainIds, 
+  walletOnly?: boolean
+): Promise<{ 
+  listedStakes: StakeOffers; 
+  holderOffersCount: number 
+}>
 ```
 
 ### Transfer Stake
 Transfer stakes to someone else
 ```typescript
-transferStake(chain: ChainIds, stakeUnits: string, recipientAddress: EVMAddress): Promise<string>
+transferStake(
+  chain: ChainIds, 
+  stakeUnits: string, 
+  recipientAddress: EVMAddress
+): Promise<string>
 ```
 
 ### Take Stake
@@ -273,10 +394,12 @@ takeStake(chain: ChainIds, offerId: string): Promise<string>
 ### Remove Stake Offer
 Remove a previously created stake offer
 ```typescript
-removeStakeOffer(chain: ChainIds, offerId: string): Promise<string>
+removeStakeOffer(
+  chain: ChainIds,
+  offerId: string
+): Promise<string>
 ```
 
----
 
 ## Wallet Methods
 
@@ -304,7 +427,6 @@ Returns address of connected wallet (if any)
 getWalletAddress(): Promise<string | undefined>
 ```
 
----
 
 ## General Methods
 
@@ -350,7 +472,6 @@ Shorten text with ellipsis etc.
 truncateText(text: string, length: number): string
 ```
 
----
 
 ## Important Types
 

@@ -11,7 +11,7 @@ Install using `yarn add merchantslate` or `npm install merchantslate`
 
 OR use in browsers through CDN
 
-`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.3/dist/browser/merchant.min.js"></script>`
+`<script src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.5/dist/browser/merchant.min.js"></script>`
 
 Note: Public RPCs obtained from https://chainlist.org/ are used as default for development only and should be updated using `config`
 
@@ -54,3 +54,7 @@ merchant.config({
     merchantSlateContract:``,
 })
 ```
+
+## Example Implementation
+This package is implemented at merchantslate.com
+[Example Website Repo](https://github.com/MerchantSlate/MS_Website)

@@ -444,13 +444,19 @@ interface MerchantRPCs {
 interface MerchantConfigParams extends MerchantRPCs {
     /** browser extension wallet */
     browserWallet?: string,
-    /** wallet private key (optional) */
+    /** 
+     * wallet private key (optional) 
+     * 
+     * used if no wallet can be connected in the setup environment 
+     */
     walletPrivateKey?: string,
     /**
-     * wallet seed phrase (optional)
-     * 
-     * cannot be used if private key is defined
-     */
+    * wallet seed phrase (optional)
+    * 
+    * used if no wallet can be connected in the setup environment
+    * 
+    * cannot be used if private key is defined
+    */
     walletSeedPhrase?: string,
 
     /** billion number suffix */

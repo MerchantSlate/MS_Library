@@ -317,8 +317,8 @@ const ChainIdsEnum = Object.fromEntries(
     SUPPORTED_CHAINS.map(c => [c, c])
 ) as { [K in ChainIds]: K };
 
+/** Supported Chain Data Object */
 type SupportedChainsData = {
-    /** Chain Data Object */
     [key in ChainIds]: BlockchainNetwork;
 };
 

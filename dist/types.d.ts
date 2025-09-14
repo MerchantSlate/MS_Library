@@ -232,6 +232,7 @@ declare const SUPPORTED_CHAINS: readonly ["ETH", "APT", "BSC", "POLYGON", "AVALA
 type ChainIds = typeof SUPPORTED_CHAINS[number];
 /** Chain Ids Enum */
 declare const ChainIdsEnum: { [K in ChainIds]: K; };
+/** Supported Chain Data Object */
 type SupportedChainsData = {
     [key in ChainIds]: BlockchainNetwork;
 };

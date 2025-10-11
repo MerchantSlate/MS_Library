@@ -241,6 +241,7 @@ const
                 payments.push(paymentRawConvert(list[i]));
             return { payments, total };
         } catch (error: any) {
+            console.log(`getPayments failed`, error);
             return {};
         };
     },

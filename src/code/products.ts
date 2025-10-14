@@ -31,7 +31,7 @@ const
             if (typeof data != `string`) throw data;
             return { success: true, data }
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `productFee`, error });
         };
     },
     /** Product Fee Text */
@@ -55,7 +55,7 @@ const
                 data = `${symbol} ${processNumbers(coinAmount)} ~ $${processNumbers(usdValue)}`;
             return { success: true, data };
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `productFeeText`, error });
         };
     },
     /** Add Product */
@@ -140,7 +140,7 @@ const
                 data = { isNew, productId, hash };
             return { success: true, data }
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `updateProduct`, error });
         };
     },
     /** Delete Product */
@@ -154,7 +154,7 @@ const
                 tx = await contract.deleteProduct(productId);
             return processTxHash(tx);
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `deleteProduct`, error });
         };
     },
     /** Product Data Convert */
@@ -221,7 +221,7 @@ const
                 };
             return { success: true, data }
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `getProductDetails`, error });
         };
     },
     /** Products List Processed */

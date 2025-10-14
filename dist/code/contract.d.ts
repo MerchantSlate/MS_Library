@@ -8,6 +8,9 @@ ZERO_ADDRESS: EVMAddress,
 contractErrors: StringObj, 
 /** Process Transaction Hash */
 processTxHash: (tx: TransactionResponse) => ResultPromise<string>, 
-/** Contract Error Response Processing */
-errorResponse: (error: any) => ErrorResponse;
+/** Error Response Processing */
+errorResponse: ({ origin, error, }: {
+    origin: string;
+    error: any;
+}) => ErrorResponse;
 export { selectedChain, setSelectedChain, ZERO_ADDRESS, contractErrors, processTxHash, errorResponse, };

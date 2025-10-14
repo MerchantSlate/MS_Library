@@ -46,29 +46,48 @@ const
             if (typeof data != `string`) throw data
             return { success: true, data }
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `processTxHash`, error });
         };
     },
-    /** Contract Error Response Processing */
-    errorResponse = (error: any): ErrorResponse => {
-        if (getConfig()?.consoleLogEnabled) console.log(`Contract error`, error);
-        const
-            defaultError = `UNKNOWN_ERROR`,
-            errorCode: ErrorCodeString = error?.reason
-                || error?.code
-                || defaultError,
-            errorNote: string = contractErrors[error?.reason]
-                || rpcErrors[error?.code]
-                || (
-                    errorCode?.toLowerCase()?.includes(`exceeds balance`) ?
-                        rpcErrors.INSUFFICIENT_FUNDS
-                        : contractErrors[defaultError]
-                );
-        return {
-            success: false,
-            errorCode,
-            errorNote,
-        }
+    /** Error Response Processing */
+    errorResponse = ({
+        origin,
+        error,
+    }: {
+        origin: string;
+        error: any;
+    }): ErrorResponse => {
+        const defaultError = `UNKNOWN_ERROR`;
+        try {
+
+            // log error (if enabled)
+            if (getConfig()?.consoleLogEnabled)
+                console.log(`MerchantSlate`, origin, `Error`, error);
+
+            const
+                errorCode: ErrorCodeString = error?.reason
+                    || error?.code
+                    || error?.message
+                    || defaultError,
+                errorNote: string = contractErrors[error?.reason]
+                    || rpcErrors[error?.code]
+                    || (
+                        errorCode?.toLowerCase()?.includes(`exceeds balance`) ?
+                            rpcErrors.INSUFFICIENT_FUNDS
+                            : contractErrors[defaultError]
+                    );
+            return {
+                success: false,
+                errorCode,
+                errorNote,
+            };
+        } catch (e) {
+            return {
+                success: false,
+                errorCode: defaultError,
+                errorNote: contractErrors[defaultError],
+            };
+        };
     };
 
 export {

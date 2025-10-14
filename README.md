@@ -56,7 +56,9 @@ config({
   millionSuffix?: string,
   /** MerchantSlate Contract Address (does not require change) */
   merchantSlateContract?: string,
-})
+  /** Chain RPC (pass as ${ChainId}_RPC) string for a single RPC or string[] for multiple RPCs */
+  BSC_RPC?: string | string[],
+});
 ```
 
 ### Get Chains Data

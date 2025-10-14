@@ -317,6 +317,9 @@ const ChainIdsEnum = Object.fromEntries(
     SUPPORTED_CHAINS.map(c => [c, c])
 ) as { [K in ChainIds]: K };
 
+/** Cache Valid RPC */
+type CachedValidRPC = Partial<Record<ChainIds, { url: string; time: number }>>;
+
 /** Supported Chain Data Object */
 type SupportedChainsData = {
     [key in ChainIds]: BlockchainNetwork;
@@ -433,7 +436,7 @@ interface StakeOffers {
 }
 
 type MerchantRPCs = {
-    [K in ChainIds as `${K}_RPC`]?: string;
+    [K in ChainIds as `${K}_RPC`]?: string | string[];
 };
 
 interface MerchantConfigParams extends MerchantRPCs {
@@ -453,18 +456,24 @@ interface MerchantConfigParams extends MerchantRPCs {
     * cannot be used if private key is defined
     */
     walletSeedPhrase?: string,
-
     /** billion number suffix */
     billionSuffix?: string,
     /** million number suffix */
     millionSuffix?: string,
-
     /** MerchantSlate Contract Address (does not require change) */
     merchantSlateContract?: string,
-
     /** Log contract errors (default true) */
     consoleLogEnabled?: boolean,
+    /** Time Limit (Cache Valid RPC) - default (1 min) */
+    validRPCTime?: number;
 };
+
+interface MerchantConfigBasics extends MerchantConfigParams {
+    /** MerchantSlate Contract Address (does not require change) */
+    merchantSlateContract: string,
+    /** Time Limit (Cache Valid RPC) - default (1 min) */
+    validRPCTime: number;
+}
 
 export {
     /** result promise */
@@ -487,6 +496,8 @@ export {
 
     /** Chain Ids Enum */
     ChainIdsEnum,
+
+    CachedValidRPC,
 
     /** supported chains data object */
     SupportedChainsData,
@@ -555,8 +566,10 @@ export {
     /** stakes offered object */
     StakeOffers,
 
-    /** MerchantSlate Config */
-    MerchantConfigParams,
     /** MerchantSlate RPCs */
     MerchantRPCs,
+    /** MerchantSlate Config */
+    MerchantConfigParams,
+    /** MerchantSlate Base Config */
+    MerchantConfigBasics,
 }

@@ -10,10 +10,12 @@ payProduct: (chain: ChainIds, product: ProductChain, quantity?: string) => Resul
 /** Pay product transactions */
 payTxs: (chain: ChainIds, productId: string, quantity?: string) => ResultPromise<PayTxsData>, 
 /** Payment Validation */
-payValidation: ({ chain, productId, walletAddress, }: {
+payValidation: ({ chain, productId, walletAddress, validationRange, }: {
     chain: ChainIds;
     productId: string;
     walletAddress: EVMAddress;
+    /** number of recent payments to consider */
+    validationRange?: number;
 }) => ResultPromise<Payment>, 
 /** Payments List */
 getPayments: (chain: ChainIds, pageNo: string, pageSize: string, merchantId?: string, connectedWallet?: EVMAddress) => Promise<{

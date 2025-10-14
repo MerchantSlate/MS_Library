@@ -19,7 +19,7 @@ const
             if (!data) throw data
             return { success: true, data }
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `totalStakes`, error });
         };
     },
     /** wallet stake count */
@@ -35,7 +35,7 @@ const
                 data = { holdings, offered };
             return { success: true, data };
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `stakesCount`, error });
         };
     },
     /** Transfer Stake */
@@ -50,7 +50,7 @@ const
                 tx = await contract.transferStake(stakeUnits, recipientAddress);
             return processTxHash(tx);
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `transferStake`, error });
         };
     },
     /** Offer Stake  */
@@ -65,7 +65,7 @@ const
                 tx = await contract.offerStake(stakeUnits, totalValueWei);
             return processTxHash(tx);
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `offerStake`, error });
         };
     },
     /** Stakes Offered */
@@ -101,6 +101,7 @@ const
                 holderOffersCount,
             };
         } catch (error: any) {
+            errorResponse({ origin: `stakesOffered`, error });
             return
         };
     },
@@ -124,7 +125,7 @@ const
                 tx = await contract.removeStakeOffer(offerId);
             return processTxHash(tx);
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `removeStakeOffer`, error });
         };
     },
     /** Take Stake */
@@ -149,7 +150,7 @@ const
             );
             return processTxHash(tx);
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `takeStake`, error });
         };
     };
 

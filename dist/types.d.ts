@@ -232,6 +232,11 @@ declare const SUPPORTED_CHAINS: readonly ["ETH", "APT", "BSC", "POLYGON", "AVALA
 type ChainIds = typeof SUPPORTED_CHAINS[number];
 /** Chain Ids Enum */
 declare const ChainIdsEnum: { [K in ChainIds]: K; };
+/** Cache Valid RPC */
+type CachedValidRPC = Partial<Record<ChainIds, {
+    url: string;
+    time: number;
+}>>;
 /** Supported Chain Data Object */
 type SupportedChainsData = {
     [key in ChainIds]: BlockchainNetwork;
@@ -336,7 +341,7 @@ interface StakeOffers {
     [offerId: string]: StakeOffered;
 }
 type MerchantRPCs = {
-    [K in ChainIds as `${K}_RPC`]?: string;
+    [K in ChainIds as `${K}_RPC`]?: string | string[];
 };
 interface MerchantConfigParams extends MerchantRPCs {
     /** browser extension wallet */
@@ -363,6 +368,14 @@ interface MerchantConfigParams extends MerchantRPCs {
     merchantSlateContract?: string;
     /** Log contract errors (default true) */
     consoleLogEnabled?: boolean;
+    /** Time Limit (Cache Valid RPC) - default (1 min) */
+    validRPCTime?: number;
+}
+interface MerchantConfigBasics extends MerchantConfigParams {
+    /** MerchantSlate Contract Address (does not require change) */
+    merchantSlateContract: string;
+    /** Time Limit (Cache Valid RPC) - default (1 min) */
+    validRPCTime: number;
 }
 export { 
 /** result promise */
@@ -378,7 +391,7 @@ SUPPORTED_CHAINS,
 /** Supported Chains Type */
 ChainIds, 
 /** Chain Ids Enum */
-ChainIdsEnum, 
+ChainIdsEnum, CachedValidRPC, 
 /** supported chains data object */
 SupportedChainsData, 
 /** contract functions */
@@ -435,7 +448,9 @@ ErrorCodeString,
 StakeOffered, 
 /** stakes offered object */
 StakeOffers, 
+/** MerchantSlate RPCs */
+MerchantRPCs, 
 /** MerchantSlate Config */
 MerchantConfigParams, 
-/** MerchantSlate RPCs */
-MerchantRPCs, };
+/** MerchantSlate Base Config */
+MerchantConfigBasics, };

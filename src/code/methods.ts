@@ -10,6 +10,7 @@ import contractABI from "../data/contract_abi.json";
 import approveABI from "../data/approve_abi.json";
 import { config, getChainsData, getConfig } from "./config";
 import {
+    CachedValidRPC,
     ChainIds,
     ContractFunctions,
     EVMAddress,
@@ -18,6 +19,8 @@ import {
 import { errorResponse, processTxHash } from "./contract";
 
 const
+    /** Cache Valid RPC */
+    cachedValidRPC: CachedValidRPC = {},
     /** Get BigNumbers */
     decimalFactor = (decimals: number | string | bigint) =>
         10n ** toBigInt(decimals),
@@ -124,21 +127,81 @@ const
     getProvider = async (
         chain: ChainIds,
         wallet: boolean = false
-    ) => {
-        const
-            {
-                walletPrivateKey,
-                walletSeedPhrase,
-            } = getConfig(),
-            chainsData = getChainsData(),
-            providerBrowser = wallet
-                && !walletPrivateKey
-                && !walletSeedPhrase
-                ? await connectWallet(chain)
-                : undefined,
-            provider = providerBrowser
-                || new JsonRpcProvider(chainsData[chain].rpcUrls[0]);
-        return provider
+    ): Promise<BrowserProvider | JsonRpcProvider | undefined> => {
+        try {
+            const
+                {
+                    walletPrivateKey,
+                    walletSeedPhrase,
+                    validRPCTime,
+                } = getConfig(),
+                chainsData = getChainsData(),
+
+                // browser provider
+                providerBrowser = wallet
+                    && !walletPrivateKey
+                    && !walletSeedPhrase
+                    ? await connectWallet(chain)
+                    : undefined;
+            if (providerBrowser) return providerBrowser;
+
+            // cached RPC
+            const
+                timeNow = Date.now(),
+                cachedURL = cachedValidRPC[chain]?.url;
+            if (
+                cachedURL
+                && (cachedValidRPC[chain]?.time || 0) > (timeNow - validRPCTime)
+            ) {
+                return new JsonRpcProvider(cachedURL);
+            };
+
+            // check RPCs
+            const rpcUrls = chainsData[chain]?.rpcUrls || [];
+            for (let i = 0; i < rpcUrls.length; i++) {
+                const url = rpcUrls[i];
+                if (!url) continue;
+                try {
+                    const
+                        prov = new JsonRpcProvider(url),
+                        blockNum = await prov?.getBlockNumber();
+
+                    // success
+                    if (blockNum != undefined) {
+                        cachedValidRPC[chain] = {
+                            url,
+                            time: timeNow,
+                        };
+                        return prov;
+                    } else {
+                        errorResponse({
+                            origin: `getProvider`,
+                            error: `RPC failed for ${chain}, ${url}`
+                        });
+                    };
+
+                    // error
+                } catch (error) {
+                    errorResponse({
+                        origin: `getProvider: RPC error for ${chain}, ${url}`,
+                        error
+                    });
+                };
+            };
+
+            // fallback
+            errorResponse({
+                origin: `getProvider`,
+                error: `No working RPCs for ${chain} chain`,
+            });
+            return new JsonRpcProvider(rpcUrls[0]);
+        } catch (error) {
+            errorResponse({
+                origin: `getProvider`,
+                error,
+            });
+            return
+        };
     },
     /** wallet signer */
     getSigner = async (
@@ -221,7 +284,7 @@ const
                 );
             return processTxHash(tx);
         } catch (error) {
-            return errorResponse(error);
+            return errorResponse({ origin: `approve`, error });
         };
     },
     /** Get wallet address */

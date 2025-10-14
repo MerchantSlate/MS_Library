@@ -31,7 +31,7 @@ const
             if (typeof data != `string`) throw data;
             return { success: true, data };
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `merchantFee`, error });
         };
     },
     /** Merchant Fee Value Text */
@@ -55,7 +55,7 @@ const
                 data = `${symbol} ${processNumbers(coinAmount)} ~ $${processNumbers(usdValue)}`;
             return { success: true, data };
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `merchantFeeValueText`, error });
         };
     },
     /** Merchant Id */
@@ -81,7 +81,7 @@ const
             merchantIdCacheSave(merchantIdCache);
             return { success: true, data };
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `getMerchantId`, error });
         };
     },
     /** Merchant Signup */
@@ -113,7 +113,7 @@ const
                 data = { hash, merchantId };
             return { success: true, data }
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `merchantSignup`, error });
         };
     };
 

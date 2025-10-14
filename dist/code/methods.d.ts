@@ -16,7 +16,7 @@ fromWei: (value: string, decimals?: number) => number,
 /** Get browser wallet */
 getBrowserWallet: () => any, 
 /** wallet provider */
-getProvider: (chain: ChainIds, wallet?: boolean) => Promise<BrowserProvider | JsonRpcProvider>, 
+getProvider: (chain: ChainIds, wallet?: boolean) => Promise<BrowserProvider | JsonRpcProvider | undefined>, 
 /** wallet contract */
 getContract: (chain: ChainIds, wallet?: boolean, address?: string, abi?: InterfaceAbi) => Promise<ContractFunctions>, 
 /** Approve Token Transfers */

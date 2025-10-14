@@ -99,7 +99,7 @@ const
                 data = { hash, paymentId };
             return { success: true, data }
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `payProduct`, error });
         };
     },
     /** Pay product transactions */
@@ -148,7 +148,7 @@ const
 
             return { success: true, data }
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `payTxs`, error });
         };
     },
     /** Payment Validation */
@@ -156,32 +156,30 @@ const
         chain,
         productId,
         walletAddress,
+        validationRange = 20,
     }: {
         chain: ChainIds,
         productId: string,
         walletAddress: EVMAddress,
+        /** number of recent payments to consider */
+        validationRange?: number,
     }): ResultPromise<Payment> => {
         try {
-            const
-                allData = await Promise.all([
-                    getProductDetails(
-                        chain,
-                        productId
-                    ),
-                    getPayments(
-                        chain,
-                        `0`,
-                        `20`,
-                        `0`,
-                        walletAddress
-                    )
-                ]),
-                requiredRes = allData[0];
-            if (!requiredRes?.success) return requiredRes;
+            const productDetails = await getProductDetails(
+                chain,
+                productId
+            );
+            if (!productDetails?.success) return productDetails;
 
             const
-                paymentsData = allData[1],
-                product = requiredRes?.data?.product,
+                paymentsData = await getPayments(
+                    chain,
+                    `0`,
+                    `${validationRange}`,
+                    `0`,
+                    walletAddress
+                ),
+                product = productDetails?.data?.product,
                 amount = product?.amount,
                 token = product?.token,
                 payments = paymentsData?.payments || [];
@@ -198,9 +196,12 @@ const
                     return { success: true, data: payData };
             };
 
-            return errorResponse(undefined);
+            return errorResponse({
+                origin: `payValidation`,
+                error: `No valid payment`
+            });
         } catch (error: any) {
-            return errorResponse(error);
+            return errorResponse({ origin: `payValidation`, error });
         };
     },
     /** Payment Data Convert */

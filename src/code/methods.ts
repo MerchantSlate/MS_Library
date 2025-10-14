@@ -5,6 +5,8 @@ import {
     Wallet,
     InterfaceAbi,
     Contract,
+    Network,
+    FallbackProvider,
 } from "ethers";
 import contractABI from "../data/contract_abi.json";
 import approveABI from "../data/approve_abi.json";
@@ -156,6 +158,26 @@ const
                 return new JsonRpcProvider(cachedURL);
             };
 
+            const
+                staticNetwork = Network.from(chainsData[chain].chainId),
+                providerStatic = (url: string) =>
+                    new JsonRpcProvider(
+                        url,
+                        staticNetwork,
+                        { staticNetwork }
+                    );
+
+            // TODO consider FallbackProvider
+            // const providerObj = new FallbackProvider(
+            //     [
+            //         { provider, priority: 1, weight: 1 },
+            //     ],
+            //     staticNetwork,
+            //     {
+            //         quorum: 1,
+            //     }
+            // );
+
             // check RPCs
             const rpcUrls = chainsData[chain]?.rpcUrls || [];
             for (let i = 0; i < rpcUrls.length; i++) {
@@ -163,8 +185,8 @@ const
                 if (!url) continue;
                 try {
                     const
-                        prov = new JsonRpcProvider(url),
-                        blockNum = await prov?.getBlockNumber();
+                        providerObj = providerStatic(url),
+                        blockNum = await providerObj?.getBlockNumber();
 
                     // success
                     if (blockNum != undefined) {
@@ -172,7 +194,7 @@ const
                             url,
                             time: timeNow,
                         };
-                        return prov;
+                        return providerObj;
                     } else {
                         errorResponse({
                             origin: `getProvider`,
@@ -194,7 +216,7 @@ const
                 origin: `getProvider`,
                 error: `No working RPCs for ${chain} chain`,
             });
-            return new JsonRpcProvider(rpcUrls[0]);
+            return providerStatic(rpcUrls[0]);
         } catch (error) {
             errorResponse({
                 origin: `getProvider`,

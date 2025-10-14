@@ -160,7 +160,7 @@ const
     }: {
         chain: ChainIds,
         productId: string,
-        walletAddress: EVMAddress,
+        walletAddress?: EVMAddress,
         /** number of recent payments to consider */
         validationRange?: number,
     }): ResultPromise<Payment> => {

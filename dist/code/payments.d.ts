@@ -13,7 +13,7 @@ payTxs: (chain: ChainIds, productId: string, quantity?: string) => ResultPromise
 payValidation: ({ chain, productId, walletAddress, validationRange, }: {
     chain: ChainIds;
     productId: string;
-    walletAddress: EVMAddress;
+    walletAddress?: EVMAddress;
     /** number of recent payments to consider */
     validationRange?: number;
 }) => ResultPromise<Payment>, 

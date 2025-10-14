@@ -2,8 +2,9 @@
 ## MerchantSlate SDK - Change Log
 
 ### 14 October 2025
-* `config` accepts array of RPCs to be used in same order (if any fails)
+* `walletAddress` is now optional in `payValidation`
 * `validationRange` optional parameter added for `payValidation`
+* `config` accepts array of RPCs to be used in same order (if any fails)
 * `validRPCTime` added to configuration to control RPC re-validation interval
 
 ### 14 September 2025

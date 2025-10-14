@@ -158,15 +158,6 @@ const
                 return new JsonRpcProvider(cachedURL);
             };
 
-            const
-                staticNetwork = Network.from(chainsData[chain].chainId),
-                providerStatic = (url: string) =>
-                    new JsonRpcProvider(
-                        url,
-                        staticNetwork,
-                        { staticNetwork }
-                    );
-
             // TODO consider FallbackProvider
             // const providerObj = new FallbackProvider(
             //     [
@@ -185,7 +176,7 @@ const
                 if (!url) continue;
                 try {
                     const
-                        providerObj = providerStatic(url),
+                        providerObj = new JsonRpcProvider(url),
                         blockNum = await providerObj?.getBlockNumber();
 
                     // success
@@ -216,7 +207,7 @@ const
                 origin: `getProvider`,
                 error: `No working RPCs for ${chain} chain`,
             });
-            return providerStatic(rpcUrls[0]);
+            return new JsonRpcProvider(rpcUrls[0]);
         } catch (error) {
             errorResponse({
                 origin: `getProvider`,

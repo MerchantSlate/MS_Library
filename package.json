@@ -1,5 +1,5 @@
 {
-  "name": "merchantslate",
+  "name": "@merchantslate/legacy",
   "version": "0.7.6",
   "main": "dist/node/merchant.node.min.js",
   "module": "dist/node/merchant.node.min.js",
@@ -44,5 +44,8 @@
   },
   "files": [
     "dist/"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -17,13 +17,13 @@ This package is implemented at merchantslate.com
 
 
 ## Setup
-Install using `yarn add merchantslate` or `npm install merchantslate` 
+Install using `yarn add @merchantslate/legacy` or `npm install @merchantslate/legacy` 
 
 OR use in browsers through CDN
 
 ```html
 <script 
-  src="https://cdn.jsdelivr.net/npm/merchantslate@0.6.9/dist/browser/merchant.min.js"
+  src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@0.7.6/dist/browser/merchant.min.js"
 ></script>
 ```
 

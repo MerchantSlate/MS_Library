@@ -23,7 +23,7 @@ OR use in browsers through CDN
 
 ```html
 <script 
-  src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@0.7.6/dist/browser/merchant.min.js"
+  src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@1.0.0/dist/browser/merchant.min.js"
 ></script>
 ```
 
@@ -104,27 +104,78 @@ contractErrors: Record<string, string>
 Gets on-chain token metadata (symbol, name, decimals etc.)
 ```typescript
 getTokenData(
+  chain: ChainIds,
   tokenAddress: EVMAddress,
-  chain: ChainIds
-): Promise<TokenData>
+  skipLogo?: boolean
+): Promise<TokenDataExtended | undefined>
+```
+
+Example: get native BNB data on BSC
+```typescript
+import { getTokenData, ChainIdsEnum, ZERO_ADDRESS } from "@merchantslate/legacy";
+
+const bnbData = await getTokenData(ChainIdsEnum.BSC, ZERO_ADDRESS);
+// {
+//   logo: "https://merchantslate.com/assets/chains/BSC.svg",
+//   symbol: "BNB",
+//   name: "Binance Coin",
+//   decimals: 18,
+//   address: "0x0000000000000000000000000000000000000000"
+// }
+```
+
+Example: get an ERC-20 token data on BSC
+```typescript
+import { getTokenData, ChainIdsEnum } from "@merchantslate/legacy";
+
+const usdtData = await getTokenData(
+  ChainIdsEnum.BSC,
+  `0x55d398326f99059ff775485246999027b3197955`
+);
+// { symbol: "USDT", name: "Tether USD", decimals: 6, ... }
 ```
 
 ### Token Onchain Data
 Maybe similar but includes additional data (e.g. balances?)
 ```typescript
 tokenOnchainData(
-  tokenAddress: EVMAddress,
-  chain: ChainIds
-): Promise<OnchainTokenData>
+  chain: ChainIds,
+  tokenAddress: EVMAddress
+): Promise<TokenData | undefined>
 ```
 
 ### Get Token Rate
-Gets current rate / price of token in some unit or relative value
+Gets current rate / price of token in some unit or relative value.
+Defaults to the chain's USDT as reference, so the value is effectively the token price in USD.
 ```typescript
-getTokenRate(
+getTokenRate({
+  chain: ChainIds,
   tokenAddress: EVMAddress,
-  chain: ChainIds
-): Promise<number>
+  referenceAddress?: EVMAddress,
+  referenceDecimals?: number,
+}): Promise<number>
+```
+
+Example: get BNB price in USD on BSC
+```typescript
+import { getTokenRate, ChainIdsEnum, ZERO_ADDRESS } from "@merchantslate/legacy";
+
+const bnbPriceUsd = await getTokenRate({
+  chain: ChainIdsEnum.BSC,
+  tokenAddress: ZERO_ADDRESS,
+});
+// 600.25
+```
+
+Example: get an ERC-20 token price in USD on BSC
+```typescript
+import { getTokenRate, ChainIdsEnum } from "@merchantslate/legacy";
+
+const cakePriceUsd = await getTokenRate({
+  chain: ChainIdsEnum.BSC,
+  tokenAddress: `0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82`,
+});
+// 2.13
 ```
 
 

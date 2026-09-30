@@ -1,6 +1,6 @@
 {
   "name": "@merchantslate/legacy",
-  "version": "0.7.6",
+  "version": "1.0.0",
   "main": "dist/node/merchant.node.min.js",
   "module": "dist/node/merchant.node.min.js",
   "browser": "dist/browser/merchant.min.js",

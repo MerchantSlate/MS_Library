@@ -1,164 +1,222 @@
-# MerchantSlate SDK - onchain crypto payment database
-MerchantSlate SDK is a TypeScript library for on-chain crypto payment databases, supporting front-end and back-end solutions across popular EVM chains. It enables product management, payment processing, and utility functions like fetching live token rates and data (e.g., relative to USDT). Install via npm, yarn, or CDN, and customize with RPCs.
+# MerchantSlate SDK
 
+**Onchain crypto payment database SDK for EVM chains — accept crypto payments, manage products, register merchants, run staking, and fetch live token rates in TypeScript for Node.js and the browser.**
 
-## Change Log
-[Change Log](changes.md)
+![npm version](https://img.shields.io/npm/v/@merchantslate/legacy)
+![license](https://img.shields.io/npm/l/@merchantslate/legacy)
+![types](https://img.shields.io/npm/types/@merchantslate/legacy)
+![node](https://img.shields.io/node/v/@merchantslate/legacy)
+![chains](https://img.shields.io/badge/chains-9-blue)
+![modules](https://img.shields.io/badge/modules-ESM%20%2B%20CommonJS-success)
 
+MerchantSlate SDK is a TypeScript library for onchain crypto payment databases. It supports front-end and back-end solutions across popular EVM chains and enables merchant registration, product management, payment processing, staking, and utility functions like fetching live token rates and onchain token data (for example, price in USDT). Install via npm, yarn, pnpm, or a browser CDN, and customize it with your own RPCs.
 
-## Contract Deployed
-Contract is currently deployed across popular EVM chains
-[More Info](https://github.com/MerchantSlate/Contract)
+> This package supersedes the deprecated [`merchantslate`](https://www.npmjs.com/package/merchantslate) package.
 
+## Table of Contents
 
-## Example Implementation
-This package is implemented at merchantslate.com
-[Example Website Repo](https://github.com/MerchantSlate/MS_Website)
+- [Why MerchantSlate](#why-merchantslate)
+- [Install](#install)
+- [Quick Start](#quick-start)
+- [Supported Chains](#supported-chains)
+- [Configuration](#configuration)
+- [Token](#token)
+- [Merchant](#merchant)
+- [Products](#products)
+- [Payments](#payments)
+- [Stakes](#stakes)
+- [Wallet & Provider](#wallet--provider)
+- [Formatting Utilities](#formatting-utilities)
+- [Types](#types)
+- [FAQ](#faq)
+- [Keywords](#keywords)
+- [Links](#links)
 
+## Why MerchantSlate
 
-## Setup
-Install using `yarn add @merchantslate/legacy` or `npm install @merchantslate/legacy` 
+- **Multi-chain by default** — Ethereum, Aptos, BNB Smart Chain, Polygon, Avalanche, Fantom, Arbitrum, Optimism and Celo behind one `ChainIds` type.
+- **Full payment lifecycle** — register as a merchant, list products, build payment transactions, validate payments and read payment history.
+- **Onchain token data & rates** — resolve token metadata (symbol, name, decimals, logo) and live rates relative to USDT.
+- **Staking built in** — offer, transfer, take and remove stake offers directly from your app.
+- **Node.js and browser** — dual UMD browser and CommonJS Node builds, with a `merchant` browser global.
+- **TypeScript-first** — complete type definitions for configs, products, payments, stakes and errors.
+- **Wallet-agnostic** — connect a browser wallet (MetaMask and friends) or run headless with a private key / seed phrase.
+- **Production-ready caching** — built-in RPC, token and rate caching to keep reads fast and cheap.
 
-OR use in browsers through CDN
+## Install
 
-```html
-<script 
-  src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@1.0.0/dist/browser/merchant.min.js"
-></script>
+Using npm:
+
+```bash
+npm install @merchantslate/legacy
 ```
 
-Note `merchant` is the browser global object for this library functions.
+Using yarn:
 
-### Config
-Accepts a `MerchantConfigParams` object (RPC urls, private key/seed, suffixes, contract address)
+```bash
+yarn add @merchantslate/legacy
+```
 
-Note: Public RPCs obtained from https://chainlist.org/ are used as default for development only and should be updated using `config`
+Using pnpm:
+
+```bash
+pnpm add @merchantslate/legacy
+```
+
+Or use it in browsers through a CDN:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@1.0.1/dist/browser/merchant.min.js"></script>
+```
+
+`merchant` is the browser global object exposing all library functions.
+
+## Quick Start
 
 ```typescript
+import {
+  config,
+  ChainIdsEnum,
+  merchantSignup,
+  addProduct,
+  loadProducts,
+  payProduct,
+  getTokenRate,
+  ZERO_ADDRESS,
+} from "@merchantslate/legacy";
+
+// 1. Configure RPCs (and optionally a wallet for headless/server use)
 config({
-  /** wallet private key (optional) 
-   * used if no wallet can be connected in the setup environment 
-   */
-  walletPrivateKey?: string,
-  /**
-   * wallet seed phrase (optional) 
-   * used if no wallet can be connected in the setup environment
-   * cannot be used if private key is defined
-   */
-  walletSeedPhrase?: string,
-  /** BSC RPC URL (same for any other chain)
-   * all chains list available as SUPPORTED_CHAINS 
-   */
-  BSC_RPC: string,
-  /** billion number suffix */
-  billionSuffix?: string,
-  /** million number suffix */
-  millionSuffix?: string,
-  /** MerchantSlate Contract Address (does not require change) */
-  merchantSlateContract?: string,
-  /** Chain RPC (pass as ${ChainId}_RPC) string for a single RPC or string[] for multiple RPCs */
-  BSC_RPC?: string | string[],
+  BSC_RPC: "https://your-bsc-rpc.example",
+  POLYGON_RPC: ["https://your-polygon-rpc-1.example", "https://your-polygon-rpc-2.example"],
+});
+
+// 2. Register the connected wallet as a merchant on BSC
+const signup = await merchantSignup(ChainIdsEnum.BSC);
+if (signup.success) {
+  console.log("Merchant id:", signup.data.merchantId);
+}
+
+// 3. Add a product priced in USDT
+const product = await addProduct({
+  chain: ChainIdsEnum.BSC,
+  productPrice: "19.99",
+  tokenAddress: "0x55d398326f99059ff775485246999027b3197955", // BSC USDT
+  quantity: "100",
+});
+if (product.success) {
+  console.log(product.data.isNew ? "Created" : "Updated", product.data.productId);
+}
+
+// 4. List products with presentation-ready fields
+const listing = await loadProducts({
+  chain: ChainIdsEnum.BSC,
+  pageNo: "0",
+  pageSize: "10",
+});
+console.log(listing.productsData, listing.currentPage, listing.totalPages);
+
+// 5. Pay for a product
+const payment = await payProduct(
+  ChainIdsEnum.BSC,
+  { id: "1", token: "0x55d398326f99059ff775485246999027b3197955", amount: "19990000", qty: "100", qtyCap: false, chain: ChainIdsEnum.BSC },
+  "1"
+);
+if (payment.success) console.log("Paid:", payment.data.hash, payment.data.paymentId);
+
+// 6. Read a live token rate (native BNB priced in USD/USDT)
+const bnbPrice = await getTokenRate({ chain: ChainIdsEnum.BSC, tokenAddress: ZERO_ADDRESS });
+console.log("BNB:", bnbPrice);
+```
+
+Server-side / headless signing:
+
+```typescript
+import { config, ChainIdsEnum, merchantSignup } from "@merchantslate/legacy";
+
+config({
+  BSC_RPC: "https://your-bsc-rpc.example",
+  walletPrivateKey: process.env.WALLET_PRIVATE_KEY, // or walletSeedPhrase
+});
+
+await merchantSignup(ChainIdsEnum.BSC);
+```
+
+## Supported Chains
+
+`SUPPORTED_CHAINS` is the runtime list; `ChainIds` is the matching TypeScript type and `ChainIdsEnum` its enum-like object.
+
+| Chain (`ChainIds`) | Chain ID | Native currency | Deployed |
+|--------------------|----------|-----------------|----------|
+| `ETH` | `0x1` | ETH | No |
+| `APT` | `1400` | APT | No |
+| `BSC` | `0x38` | BNB | Yes |
+| `POLYGON` | `0x89` | POL | Yes |
+| `AVALANCHE` | `0xa86a` | AVAX | Yes |
+| `FANTOM` | `0xfa` | FTM | No |
+| `ARBITRUM` | `0xa4b1` | ETH | Yes |
+| `OPTIMISM` | `0xa` | ETH | Yes |
+| `CELO` | `0xa4ec` | cUSD | Yes |
+
+```typescript
+import { SUPPORTED_CHAINS, ChainIdsEnum } from "@merchantslate/legacy";
+
+SUPPORTED_CHAINS; // ["ETH", "APT", "BSC", "POLYGON", "AVALANCHE", "FANTOM", "ARBITRUM", "OPTIMISM", "CELO"]
+ChainIdsEnum.BSC;  // "BSC"
+```
+
+## Configuration
+
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `config` | `data?: MerchantConfigParams` | `void` | Apply RPCs, wallet, suffixes, contract address and log settings. |
+| `getConfig` | — | `MerchantConfigBasics` | Returns the current configuration object. |
+| `getChainsData` | — | `SupportedChainsData` | Returns chain metadata keyed by `ChainIds`. |
+| `setSelectedChain` | `chain: ChainIds` | `void` | Sets the selected chain (cached in `localStorage` when available). |
+| `selectedChain` | — | `ChainIds` | The currently selected chain ID. |
+
+`MerchantConfigParams` accepts `{ChainId}_RPC` keys (one per supported chain) plus:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `browserWallet` | `string` | Browser extension wallet address. |
+| `walletPrivateKey` | `string` | Private key used when no wallet can be connected. |
+| `walletSeedPhrase` | `string` | Seed phrase used when no wallet can be connected (cannot be combined with `walletPrivateKey`). |
+| `billionSuffix` | `string` | Suffix used when formatting billions. |
+| `millionSuffix` | `string` | Suffix used when formatting millions. |
+| `merchantSlateContract` | `string` | MerchantSlate contract address (defaults to the deployed address). |
+| `consoleLogEnabled` | `boolean` | Log contract errors (default `true`). |
+| `validRPCTime` | `number` | RPC re-validation interval in ms (default `60000`). |
+| `BSC_RPC` (and other chains) | `string \| string[]` | RPC URL or ordered list of fallback RPC URLs for a chain. |
+
+```typescript
+import { config } from "@merchantslate/legacy";
+
+config({
+  BSC_RPC: "https://your-bsc-rpc.example",
+  ARBITRUM_RPC: ["https://arb-1.example", "https://arb-2.example"],
+  walletPrivateKey: "0x...",
+  validRPCTime: 120000,
 });
 ```
 
-### Get Chains Data
-Returns data of supported chains (`BlockchainNetwork` type)
-```typescript
-getChainsData(): BlockchainNetwork[]
-```
+> Public RPCs from [chainlist.org](https://chainlist.org/) are bundled as defaults for development only. Replace them with your own via `config`.
 
-### Get Config
-Returns the current configuration object
-```typescript
-getConfig(): MerchantConfigParams
-```
-
-### Selected Chain
-The currently selected chain ID
-```typescript
-selectedChain: ChainIds
-```
-
-### Set Selected Chain
-Sets the selected chain
-```typescript
-setSelectedChain(chain: ChainIds): void
-```
-
-### Zero Address
-The zero address constant
-```typescript
-ZERO_ADDRESS: EVMAddress
-```
-
-### Contract Errors
-Object of possible error codes / messages from smart contract
-```typescript
-contractErrors: Record<string, string>
-```
-
+Other exported values: `ZERO_ADDRESS: EVMAddress` and `contractErrors: Record<string, string>` (readable messages for contract error codes).
 
 ## Token
 
-### Get Token Data
-Gets on-chain token metadata (symbol, name, decimals etc.)
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `getTokenData` | `chain`, `tokenAddress`, `skipLogo?` | `Promise<TokenDataExtended \| undefined>` | Onchain token metadata (address, name, symbol, decimals) with a logo. |
+| `tokenOnchainData` | `chain`, `tokenAddress` | `Promise<TokenData \| undefined>` | Raw onchain token metadata without the logo lookup. |
+| `getTokenRate` | `{ chain, tokenAddress, referenceAddress?, referenceDecimals? }` | `Promise<number>` | Current rate of a token relative to a reference token. Defaults to the chain's USDT, so the value is effectively the price in USD. |
+
 ```typescript
-getTokenData(
-  chain: ChainIds,
-  tokenAddress: EVMAddress,
-  skipLogo?: boolean
-): Promise<TokenDataExtended | undefined>
-```
+import { getTokenData, getTokenRate, ChainIdsEnum, ZERO_ADDRESS } from "@merchantslate/legacy";
 
-Example: get native BNB data on BSC
-```typescript
-import { getTokenData, ChainIdsEnum, ZERO_ADDRESS } from "@merchantslate/legacy";
-
-const bnbData = await getTokenData(ChainIdsEnum.BSC, ZERO_ADDRESS);
-// {
-//   logo: "https://merchantslate.com/assets/chains/BSC.svg",
-//   symbol: "BNB",
-//   name: "Binance Coin",
-//   decimals: 18,
-//   address: "0x0000000000000000000000000000000000000000"
-// }
-```
-
-Example: get an ERC-20 token data on BSC
-```typescript
-import { getTokenData, ChainIdsEnum } from "@merchantslate/legacy";
-
-const usdtData = await getTokenData(
-  ChainIdsEnum.BSC,
-  `0x55d398326f99059ff775485246999027b3197955`
-);
-// { symbol: "USDT", name: "Tether USD", decimals: 6, ... }
-```
-
-### Token Onchain Data
-Maybe similar but includes additional data (e.g. balances?)
-```typescript
-tokenOnchainData(
-  chain: ChainIds,
-  tokenAddress: EVMAddress
-): Promise<TokenData | undefined>
-```
-
-### Get Token Rate
-Gets current rate / price of token in some unit or relative value.
-Defaults to the chain's USDT as reference, so the value is effectively the token price in USD.
-```typescript
-getTokenRate({
-  chain: ChainIds,
-  tokenAddress: EVMAddress,
-  referenceAddress?: EVMAddress,
-  referenceDecimals?: number,
-}): Promise<number>
-```
-
-Example: get BNB price in USD on BSC
-```typescript
-import { getTokenRate, ChainIdsEnum, ZERO_ADDRESS } from "@merchantslate/legacy";
+const bnb = await getTokenData(ChainIdsEnum.BSC, ZERO_ADDRESS);
+// { symbol: "BNB", name: "Binance Coin", decimals: 18, logo: "...", address: "0x0000..." }
 
 const bnbPriceUsd = await getTokenRate({
   chain: ChainIdsEnum.BSC,
@@ -167,376 +225,193 @@ const bnbPriceUsd = await getTokenRate({
 // 600.25
 ```
 
-Example: get an ERC-20 token price in USD on BSC
-```typescript
-import { getTokenRate, ChainIdsEnum } from "@merchantslate/legacy";
-
-const cakePriceUsd = await getTokenRate({
-  chain: ChainIdsEnum.BSC,
-  tokenAddress: `0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82`,
-});
-// 2.13
-```
-
-
 ## Merchant
 
-### Merchant Fee
-Fee required to register as merchant on given chain (in wei or string)
-```typescript
-merchantFee(chain: ChainIds): Promise<string>
-```
+All merchant functions return a `Result<T>` — either `{ success: true, data: T }` or `ErrorResponse`.
 
-### Merchant Fee Value Text
-Same as merchantFee but formatted as human readable text
-```typescript
-merchantFeeValueText(chain: ChainIds): Promise<string>
-```
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `merchantFee` | `chain` | `ResultPromise<string>` | Fee required to register as a merchant (wei string). |
+| `merchantFeeValueText` | `chain` | `ResultPromise<string>` | Same fee formatted as human-readable native value and USD estimate. |
+| `merchantSignup` | `chain` | `ResultPromise<{ hash?: string; merchantId?: string }>` | Register the connected wallet as a merchant and return the transaction hash and merchant id. |
+| `getMerchantId` | `chain` | `ResultPromise<string>` | Merchant id of the connected wallet (cached per wallet and chain). |
 
-### Merchant Signup
-Initiate merchant signup transaction
 ```typescript
-merchantSignup(
-  chain: ChainIds
-): Promise<{ hash?: string; merchantId?: string }>
-```
+import { merchantFeeValueText, merchantSignup, ChainIdsEnum } from "@merchantslate/legacy";
 
-### Get Merchant Id
-Get merchant id of connected wallet
-```typescript
-getMerchantId(chain: ChainIds): Promise<string>
-```
+const feeText = await merchantFeeValueText(ChainIdsEnum.BSC);
+// BNB 0.01 ~ $6.25
 
+const signup = await merchantSignup(ChainIdsEnum.BSC);
+if (signup.success) console.log(signup.data.merchantId);
+```
 
 ## Products
 
-### Product Fee
-Fee to add product on given chain
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `productFee` | `chain` | `ResultPromise<string>` | Fee to add or update a product (wei string). |
+| `productFeeText` | `chain` | `ResultPromise<string>` | Product fee formatted as human-readable native value and USD estimate. |
+| `addProduct` | `ProductParams` | `ResultPromise<ProductUpdateResponse>` | Add a new product and return `{ hash, productId, isNew: true }`. |
+| `updateProduct` | `ProductParams` | `ResultPromise<ProductUpdateResponse>` | Add or update a product (pass `productId` to update). |
+| `deleteProduct` | `chain`, `productId` | `ResultPromise<string>` | Delete a product and return the transaction hash. |
+| `getProducts` | `chain`, `pageNo`, `pageSize`, `merchantId?` | `Promise<{ products?: Product[]; total?: number }>` | Raw products with pagination and optional merchant filter. |
+| `getProductDetails` | `chain`, `productId` | `ResultPromise<ProductExtended>` | Full details for a single product plus token info and USD value. |
+| `loadProducts` | `{ chain, pageNo, pageSize, isMerchantOnly? }` | `Promise<ProductDataAll>` | Presentation-ready products with logos, formatted prices and pagination. |
+
+`ProductParams` = `{ chain, productPrice, productId?, tokenAddress?, quantity?, commissionAddress?, commissionPercentage? }`.
+
 ```typescript
-productFee(chain: ChainIds): Promise<string>
+import { addProduct, loadProducts, ChainIdsEnum } from "@merchantslate/legacy";
+
+const added = await addProduct({
+  chain: ChainIdsEnum.BSC,
+  productPrice: "19.99",
+  tokenAddress: "0x55d398326f99059ff775485246999027b3197955",
+  quantity: "100",
+  commissionPercentage: "2",
+  commissionAddress: "0xYourCommissionWallet",
+});
+// { isNew: true, productId: "1", hash: "0x..." }
+
+const products = await loadProducts({
+  chain: ChainIdsEnum.BSC,
+  pageNo: "0",
+  pageSize: "10",
+  isMerchantOnly: true,
+});
 ```
-
-### Product Fee Text
-Product fee formatted as text
-
-```typescript
-productFeeText(chain: ChainIds): Promise<string>
-```
-
-### Add Product
-Add or update product details
-```typescript
-addProduct(params: { 
-  chain: ChainIds; 
-  productPrice: string;
-  tokenAddress?: EVMAddress;
-  quantity?: string; 
-  commissionAddress?: string; 
-  commissionPercentage?: string; 
-  productId?: string; 
-}): Promise<{ 
-  hash: string; 
-  productId: string; 
-  isNew: boolean 
-}>
-```
-
-### Update Product
-Update existing product
-```typescript
-updateProduct(params: { 
-  chain: ChainIds; 
-  productPrice: string;
-  tokenAddress?: EVMAddress;
-  quantity?: string; 
-  commissionAddress?: string; 
-  commissionPercentage?: string; 
-  productId?: string; 
-}): Promise<{ 
-  hash: string; 
-  productId: string; 
-  isNew: boolean 
-}>
-```
-
-### Delete Product
-Delete a product; returns transaction hash
-```typescript
-deleteProduct(
-  chain: ChainIds, 
-  productId: string
-): Promise<string>
-```
-
-### Get Products
-Fetch products with optional pagination / filter
-```typescript
-getProducts(
-  chain: ChainIds, 
-  pageNo?: string, 
-  pageSize?: string, 
-  isMerchantOnly?: boolean
-): Promise<ProductDataAll>
-```
-
-### Get Product Details
-Get all data for a single product
-```typescript
-getProductDetails(
-  chain: ChainIds, 
-  productId: string
-): Promise<ProductData>
-```
-
-### Load Products
-Similar to getProducts but wrapped for UI loading etc.
-```typescript
-loadProducts(params: { 
-  chain: ChainIds; 
-  pageNo: string; 
-  pageSize: string; 
-  isMerchantOnly?: boolean 
-}): Promise<{ productsData: ProductDataAll }>
-```
-
 
 ## Payments
 
-### Get Payments
-Fetch payments with pagination and optional filters
-```typescript
-getPayments(
-  chain: ChainIds, 
-  pageNo?: string, 
-  pageSize?: string, 
-  isMerchantOnly?: boolean, 
-  buyerWallet?: EVMAddress
-): Promise<{ 
-  currentPage: string; 
-  previousPage?: string; 
-  nextPage?: string; 
-  totalPages: string; 
-  paymentsData: PaymentDataAll 
-}>
-```
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `payValueText` | `chain`, `product`, `quantity?` | `Promise<string \| undefined>` | Human-readable payment value for a product and quantity. |
+| `payProduct` | `chain`, `product`, `quantity?` | `ResultPromise<{ hash?: string; paymentId?: string }>` | Pay for a product (handles ERC-20 approval automatically). |
+| `payTxs` | `chain`, `productId`, `quantity?` | `ResultPromise<PayTxsData>` | Build unsigned approve/pay transactions for external signing. |
+| `payValidation` | `{ chain, productId, walletAddress?, validationRange? }` | `ResultPromise<Payment>` | Verify that a matching payment exists for the product/wallet. |
+| `getPayments` | `chain`, `pageNo`, `pageSize`, `merchantId?`, `connectedWallet?` | `Promise<{ payments?: Payment[]; total?: number }>` | Raw payments with pagination and optional merchant/wallet filters. |
+| `loadPayments` | `{ chain, pageNo, pageSize, isMerchantOnly?, buyerWallet? }` | `Promise<PaymentDataAll>` | Presentation-ready payments with token data, USD values and pagination. |
 
-### Load Payments
-Same as getPayments but wrapped for UI
 ```typescript
-loadPayments(params: { 
-  chain: ChainIds; 
-  pageNo: string; 
-  pageSize: string; 
-  isMerchantOnly: boolean; 
-  buyerWallet?: EVMAddress; 
-}): Promise<{ 
-  currentPage: string; 
-  previousPage?: string; 
-  nextPage?: string; 
-  totalPages: string; 
-  paymentsData: PaymentDataAll 
-}>
-```
+import { getPayments, loadPayments, payTxs, ChainIdsEnum } from "@merchantslate/legacy";
 
-### Pay Product
-Initiate payment transaction
-```typescript
-payProduct(
-  chain: ChainIds, 
-  product: ProductChain, 
-  quantity?: string
-): Promise<{ 
-  hash?: string; 
-  paymentId?: string 
-}>
-```
+const txs = await payTxs(ChainIdsEnum.BSC, "1", "1");
+if (txs.success) {
+  // txs.data = { chainId, token, amount, txs: [{ to, data, value? }] }
+}
 
-### Pay Value Text
-Payment value converted to human readable text
-```typescript
-payValueText(
-  chain: ChainIds, 
-  product: ProductChain, 
-  quantity?: string
-): Promise<string>
+const history = await loadPayments({
+  chain: ChainIdsEnum.BSC,
+  pageNo: "0",
+  pageSize: "10",
+  isMerchantOnly: true,
+});
 ```
-
-### Pay Txs
-Fetch transaction details for a list of payment IDs
-```typescript
-payTxs(
-  chain: ChainIds, 
-  paymentIds: string[]
-): Promise<{
-  chainId: string,
-  token: TokenData,
-  amount: string,
-  txs: TxObj[]
-}>
-```
-
-### Pay Validation
-Validate that payment inputs are acceptable etc.
-```typescript
-payValidation(
-  chain: ChainIds, 
-  product: ProductChain, 
-  quantity?: string
-): Promise<boolean>
-```
-
 
 ## Stakes
 
-### Total Stakes
-Returns total stake units/stake count on the contract
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `totalStakes` | `chain` | `ResultPromise<number>` | Total stake units on the contract. |
+| `stakesCount` | `chain` | `ResultPromise<{ holdings: number; offered: number }>` | Stakes held by the wallet and stakes offered. |
+| `offerStake` | `chain`, `stakeUnits`, `totalValueWei` | `ResultPromise<string>` | Offer stake units for public purchase. |
+| `stakesOffered` | `chain`, `wallet?` | `Promise<{ listedStakes: StakeOffers; holderOffersCount: number } \| undefined>` | List stake offers, optionally only for the connected wallet. |
+| `transferStake` | `chain`, `stakeUnits`, `recipientAddress` | `ResultPromise<string>` | Transfer stake units to another address. |
+| `takeStake` | `chain`, `offerId` | `ResultPromise<string>` | Take an existing stake offer by id. |
+| `removeStakeOffer` | `chain`, `offerId` | `ResultPromise<string>` | Remove a previously created stake offer. |
 
 ```typescript
-totalStakes(chain: ChainIds): Promise<number>
+import { stakesCount, stakesOffered, offerStake, ChainIdsEnum } from "@merchantslate/legacy";
+
+const counts = await stakesCount(ChainIdsEnum.BSC);
+if (counts.success) console.log(counts.data.holdings, counts.data.offered);
+
+const offers = await stakesOffered(ChainIdsEnum.BSC, true);
 ```
 
-### Stakes Count
-Returns count of stakes held by wallet + offered stakes
-```typescript
-stakesCount(
-  chain: ChainIds
-): Promise<{ 
-  holdings: number; 
-  offered: number 
-}>
-```
+## Wallet & Provider
 
-### Offer Stake
-Owners offer stakes for public purchase
-```typescript
-offerStake(
-  chain: ChainIds, 
-  stakeUnits: string, 
-  totalValueWei: string
-): Promise<string>
-```
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `getBrowserWallet` | — | `any` | Returns the injected browser wallet (`window.ethereum`) or `undefined`. |
+| `getProvider` | `chain`, `wallet?` | `Promise<Provider \| undefined>` | Returns a browser or JSON-RPC provider, validating RPCs and caching the working one. |
+| `getContract` | `chain`, `wallet?`, `address?`, `abi?` | `Promise<Contract>` | Returns a signed/read-only contract instance for the chain. |
+| `getWalletAddress` | `chain` | `Promise<EVMAddress \| undefined>` | Address of the connected wallet, if any. |
 
-### Stakes Offered
-Get list of stake offers; optionally only for connected wallet
-```typescript
-stakesOffered(
-  chain: ChainIds, 
-  walletOnly?: boolean
-): Promise<{ 
-  listedStakes: StakeOffers; 
-  holderOffersCount: number 
-}>
-```
+## Formatting Utilities
 
-### Transfer Stake
-Transfer stakes to someone else
-```typescript
-transferStake(
-  chain: ChainIds, 
-  stakeUnits: string, 
-  recipientAddress: EVMAddress
-): Promise<string>
-```
+| Function | Parameters | Returns | Description |
+|----------|------------|---------|-------------|
+| `integerString` | `value: number \| string` | `string` | Normalize a number into an integer string (no decimals). |
+| `toWei` | `value: string`, `decimals?` | `string` | Convert units to wei (or the smallest unit). |
+| `fromWei` | `value: string`, `decimals?` | `number` | Convert wei back into human-readable units. |
+| `processNumbers` | `input: number \| string \| bigint`, `roundingLimit?` | `string` | Format numbers with commas, rounding and million/billion suffixes. |
+| `timeAMPM` | `timestamp: number \| string \| Date` | `string` | Format a timestamp as AM/PM time, e.g. `02:30PM`. |
+| `fullDateText` | `timestamp: number \| string \| Date` | `string` | Format a timestamp as a full date, e.g. `23 June 2022`. |
+| `truncateText` | `text: string`, `limit?` | `string` | Shorten text in the middle with an ellipsis. |
 
-### Take Stake
-Take an existing stake offer by id
-```typescript
-takeStake(chain: ChainIds, offerId: string): Promise<string>
-```
+## Types
 
-### Remove Stake Offer
-Remove a previously created stake offer
-```typescript
-removeStakeOffer(
-  chain: ChainIds,
-  offerId: string
-): Promise<string>
-```
+Exported TypeScript types:
 
+| Type | Description |
+|------|-------------|
+| `ChainIds` | Union of supported chain IDs (`"BSC"`, `"POLYGON"`, ...). |
+| `ChainIdsEnum` | Enum-like object mapping each `ChainIds` to itself. |
+| `EVMAddress` | Template literal type for `0x`-prefixed Ethereum addresses. |
+| `BlockchainNetwork` | Chain metadata (chain id, native currency, RPCs, explorer, logo). |
+| `MerchantConfigParams` | Input object for `config`. |
+| `ErrorResponse` | `{ success: false; errorCode; errorNote }` returned on failures. |
+| `ProductChain`, `ProductData`, `ProductDataAll` | Product shapes for raw, chain-tagged and presentation data. |
+| `Payment`, `PaymentChain`, `PaymentData`, `PaymentDataAll` | Payment shapes for raw, chain-tagged and presentation data. |
+| `PayTxsData`, `TxObj` | Data returned by `payTxs` and the individual transaction objects. |
 
-## Wallet Methods
+## FAQ
 
-### Browser Wallet
-Returns the connected browser wallet signer or undefined
-```typescript
-getBrowserWallet(): Promise<Signer | undefined>
-```
+**What is MerchantSlate SDK?**
+A TypeScript SDK for an onchain crypto payment database. It lets you register merchants, manage products, accept payments, run staking and read token data and rates across supported EVM chains.
 
-### Setup Provider
-Returns the ethers provider based on the configuration
-```typescript
-getProvider(): Provider
-```
+**Is it free?**
+Yes. The SDK is open source under the MIT license. Onchain operations still cost normal network gas and any contract fees.
 
-### Contract Object
-Returns the contract instance connected to the current chain
-```typescript
-getContract(): Contract
-```
+**Does it work in the browser and Node.js?**
+Yes. It ships a UMD browser build (`dist/browser/merchant.min.js`, global `merchant`) and a CommonJS Node build (`dist/node/merchant.node.min.js`).
 
-### Wallet Address
-Returns address of connected wallet (if any)
-```typescript
-getWalletAddress(): Promise<string | undefined>
-```
+**Can I use it headlessly without a browser wallet?**
+Yes. Pass `walletPrivateKey` or `walletSeedPhrase` to `config`; otherwise it falls back to a connected browser wallet.
 
+**Is it TypeScript-friendly?**
+Yes. It is written in TypeScript and ships full type definitions along with the runtime.
 
-## General Methods
+**Which framework does it support?**
+Framework-agnostic. Use it in React, Vue, Svelte, Angular, Node services, scripts or plain HTML.
 
-### Integer String
-Normalize number/string into integer string (no decimals)
-```typescript
-integerString(num: string | number): string
-```
+**What dependencies does it have?**
+Runtime dependencies are [`ethers`](https://www.npmjs.com/package/ethers) v6 and [`node-fetch`](https://www.npmjs.com/package/node-fetch) v3.
 
-### To Wei
-Convert from units to Wei (or smallest unit)
-```typescript
-toWei(amount: string, decimals?: number): string
-```
+**Which chains are supported?**
+ETH, APT, BSC, POLYGON, AVALANCHE, FANTOM, ARBITRUM, OPTIMISM and CELO. See [Supported Chains](#supported-chains) for deployment status.
 
-### From Wei
-Convert from Wei to human readable units
-```typescript
-fromWei(amount: string, decimals?: number): string
-```
+**Do I need my own RPC?**
+Public RPCs are bundled for development only. For production, provide your own via `config` (one URL or an ordered fallback list per chain).
 
-### Process Numbers
-Format numbers suitably (commas etc.)
-```typescript
-processNumbers(input: number | string): string
-```
+**How are errors returned?**
+Onchain actions return a `Result<T>`: `{ success: true, data }` on success or an `ErrorResponse` (`errorCode`, `errorNote`) on failure.
 
-### Time AMPM
-Format a timestamp into human‐readable AM/PM time
-```typescript
-timeAMPM(timestamp: number | string): string
-```
+## Keywords
 
-### Full Date Text
-Format into full date string (day, month, year etc.)
-```typescript
-fullDateText(timestamp: number | string): string
-```
+onchain crypto payment, crypto payment SDK, crypto payment gateway, EVM payment library, web3 payments, accept crypto payments, crypto checkout, payment database, merchant SDK, product catalog onchain, smart contract payments, token price API, token rate, USDT price, ERC-20 payments, stablecoin payments, BNB Smart Chain, BSC, Polygon, Avalanche, Arbitrum, Optimism, Celo, Fantom, Ethereum, Aptos, multi-chain SDK, TypeScript, Node.js, browser, ethers.js, web3, dApp payments, onchain staking, crypto merchant.
 
-### Truncate Text
-Shorten text with ellipsis etc.
-```typescript
-truncateText(text: string, length: number): string
-```
+## Links
 
+- [Change Log](changes.md)
+- [Deployed Contract](https://github.com/MerchantSlate/Contract)
+- [Example Website](https://github.com/MerchantSlate/MS_Website)
+- [Example Implementation](https://merchantslate.com)
+- [GitHub Repository](https://github.com/MerchantSlate/MS_Library)
+- [Issues](https://github.com/MerchantSlate/MS_Library/issues)
 
-## Important Types
+## License
 
-Here are major types exported:
-
-* `BlockchainNetwork` — info about chain (name, chainId, etc.)
-* `ChainIds` — supported chain IDs type
-* `ChainIdsEnum` — supported chain IDs enum
-* `EVMAddress` — string type representing valid Ethereum‐style address
-* `ErrorResponse` — structure returned when some contract interaction fails
-* `MerchantConfigParams` — config input object (RPCs, keys, suffixes, etc.)
-* `PayTxsData` — data returned by `payTxs`
-* `Payment, PaymentChain, PaymentData, PaymentDataAll` — various payment data shapes
-* `ProductChain, ProductData, ProductDataAll` — product data shapes
-* `TxObj` — transaction object type
+MIT

@@ -1,6 +1,6 @@
 {
   "name": "@merchantslate/legacy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/node/merchant.node.min.js",
   "module": "dist/node/merchant.node.min.js",
   "browser": "dist/browser/merchant.min.js",
@@ -11,7 +11,26 @@
   "keywords": [
     "onchain crypto payment",
     "crypto payment",
-    "payment database"
+    "crypto payment sdk",
+    "crypto payment gateway",
+    "evm payments",
+    "web3 payments",
+    "crypto checkout",
+    "payment database",
+    "merchant sdk",
+    "onchain products",
+    "token rate",
+    "erc-20 payments",
+    "stablecoin payments",
+    "multi-chain",
+    "bsc",
+    "polygon",
+    "arbitrum",
+    "optimism",
+    "avalanche",
+    "celo",
+    "typescript",
+    "ethers"
   ],
   "author": "Prince Hasn",
   "homepage": "https://github.com/MerchantSlate/MS_Library#readme",
@@ -23,7 +42,7 @@
     "url": "https://github.com/MerchantSlate/MS_Library/issues"
   },
   "license": "MIT",
-  "description": "MerchantSlate is the onchain crypto payment database",
+  "description": "Onchain crypto payment database SDK for EVM chains: accept crypto payments, manage products, register merchants, run staking and fetch live token rates in TypeScript for Node.js and the browser.",
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/webpack-bundle-analyzer": "^4.7.0",

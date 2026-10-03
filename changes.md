@@ -2,7 +2,7 @@
 ## MerchantSlate SDK - Change Log
 
 ### 1.1.0
-* `getTokenLogo` and `ipfsGateway` added to `config`
+* `getTokenLogo` added to `config`
 * `TokenLogoResolver` type is exported
 
 ### 0.7.3

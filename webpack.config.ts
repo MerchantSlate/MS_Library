@@ -30,7 +30,10 @@ const commonConfig: Configuration = {
             banner: `/*! MIT License. MerchantSlate Contract SDK. https://opensource.org/licenses/MIT */`,
             raw: true, // Ensures the comment appears as-is without being wrapped
         }),
-    ],
+    ].filter(plugin =>
+        // Bundle analyzer is opt-in (ANALYZE=true) to keep builds headless
+        !(plugin instanceof BundleAnalyzerPlugin) || process.env.ANALYZE
+    ) as any,
     optimization: {
         minimize: true,           // Minify the output
         minimizer: [new TerserPlugin()],

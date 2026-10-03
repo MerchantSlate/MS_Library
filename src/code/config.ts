@@ -14,7 +14,6 @@ const
         merchantSlateContract,
         consoleLogEnabled: true,
         validRPCTime: 6e4,
-        ipfsGateway: `https://ipfs.io/ipfs/`,
     },
     /** Get updated configuration */
     getConfig = () => configuration,
@@ -30,7 +29,6 @@ const
                 consoleLogEnabled,
                 validRPCTime,
                 getTokenLogo,
-                ipfsGateway,
             } = data;
             // update wallet
             if (browserWallet) configuration.browserWallet = browserWallet;
@@ -57,9 +55,6 @@ const
 
             // custom token logo resolver
             if (getTokenLogo) configuration.getTokenLogo = getTokenLogo;
-
-            // IPFS gateway
-            if (ipfsGateway) configuration.ipfsGateway = ipfsGateway;
 
             // update RPCs
             for (let i = 0; i < SUPPORTED_CHAINS.length; i++) {

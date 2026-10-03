@@ -66,7 +66,7 @@ pnpm add @merchantslate/legacy
 Or use it in browsers through a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@1.1.0/dist/browser/merchant.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@1.2.0/dist/browser/merchant.min.js"></script>
 ```
 
 `merchant` is the browser global object exposing all library functions.
@@ -187,8 +187,7 @@ ChainIdsEnum.BSC;  // "BSC"
 | `merchantSlateContract` | `string` | MerchantSlate contract address (defaults to the deployed address). |
 | `consoleLogEnabled` | `boolean` | Log contract errors (default `true`). |
 | `validRPCTime` | `number` | RPC re-validation interval in ms (default `60000`). |
-| `getTokenLogo` | `(chain, tokenAddress) => Promise<string \| undefined>` | Custom async token logo resolver, tried before the built-in onchain lookup. |
-| `ipfsGateway` | `string` | Gateway used to resolve `ipfs://` logo URIs (default `https://ipfs.io/ipfs/`). |
+| `getTokenLogo` | `(chain, tokenAddress) => Promise<string \| undefined>` | Custom async token logo resolver used by `getTokenData`. |
 | `BSC_RPC` (and other chains) | `string \| string[]` | RPC URL or ordered list of fallback RPC URLs for a chain. |
 
 ```typescript
@@ -204,7 +203,7 @@ config({
 
 > Public RPCs from [chainlist.org](https://chainlist.org/) are bundled as defaults for development only. Replace them with your own via `config`.
 
-Token logos are resolved by `getTokenData` in this order: the custom `getTokenLogo` function, then the built-in onchain lookup, then the chain logo as the final fallback. You can supply your own resolver:
+Token logos are resolved by `getTokenData` from the custom `getTokenLogo` function, falling back to the chain logo. You can supply your own resolver:
 
 ```typescript
 import { config } from "@merchantslate/legacy";
@@ -223,15 +222,13 @@ config({
 });
 ```
 
-The built-in onchain lookup probes `logoURI`, `logo`, `image` and `icon`, then reads `tokenURI` metadata (including `data:` JSON and IPFS). Only `https:` URIs are used: private, loopback and link-local hosts are rejected, unsafe `svg`/`html` URLs are skipped, `ipfs://` URIs resolve through `ipfsGateway`, and redirects are disabled.
-
 Other exported values: `ZERO_ADDRESS: EVMAddress` and `contractErrors: Record<string, string>` (readable messages for contract error codes).
 
 ## Token
 
 | Function | Parameters | Returns | Description |
 |----------|------------|---------|-------------|
-| `getTokenData` | `chain`, `tokenAddress`, `skipLogo?` | `Promise<TokenDataExtended \| undefined>` | Onchain token metadata (address, name, symbol, decimals) with a logo resolved from the custom `getTokenLogo`, then onchain lookups, then the chain logo. |
+| `getTokenData` | `chain`, `tokenAddress`, `skipLogo?` | `Promise<TokenDataExtended \| undefined>` | Onchain token metadata (address, name, symbol, decimals) with a logo resolved from the custom `getTokenLogo`, then the chain logo. |
 | `tokenOnchainData` | `chain`, `tokenAddress` | `Promise<TokenData \| undefined>` | Raw onchain token metadata without the logo lookup. |
 | `getTokenRate` | `{ chain, tokenAddress, referenceAddress?, referenceDecimals? }` | `Promise<number>` | Current rate of a token relative to a reference token. Defaults to the chain's USDT, so the value is effectively the price in USD. |
 

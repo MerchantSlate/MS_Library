@@ -1,9 +1,8 @@
 import { ZeroAddress } from "ethers";
-import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataExtendedObj, TokenDataRaw, TokenRateObj } from "../types";
+import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataExtendedObj, TokenDataRaw, TokenLogoParams, TokenRateObj } from "../types";
 import { readCache, saveCache } from "./cache";
-import { getChainsData } from "./config";
+import { getChainsData, getConfig } from "./config";
 import { ZERO_ADDRESS } from "./contract";
-import { resolveTokenLogo } from "./logos";
 import { decimalFactor, divideNumbers, getContract } from "./methods";
 
 const
@@ -41,6 +40,15 @@ const
             symbol,
             decimals: +tokenDataRaw?.[3]?.toString(),
         }
+    },
+    /** Resolve a token logo via the custom resolver */
+    resolveTokenLogo = async ({
+        chain,
+        tokenAddress,
+    }: TokenLogoParams): Promise<string | undefined> => {
+        try {
+            return await getConfig().getTokenLogo?.(chain, tokenAddress);
+        } catch (e) { };
     },
     /** Token Data (onchain) */
     tokenOnchainData = async (

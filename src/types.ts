@@ -137,23 +137,6 @@ interface TokenLogoParams {
     tokenAddress: EVMAddress,
 };
 
-/** token contract logo getters (non-standard) */
-interface TokenLogoContract {
-    logoURI?: () => Promise<string>,
-    logo?: () => Promise<string>,
-    image?: () => Promise<string>,
-    icon?: () => Promise<string>,
-    tokenURI?: () => Promise<string>,
-};
-
-/** token metadata json */
-interface TokenMetadata {
-    image?: string,
-    image_url?: string,
-    image_data?: string,
-    data?: { image?: string },
-};
-
 interface Payment {
     /** Unique identifier for the payment transaction */
     id: string;
@@ -499,8 +482,6 @@ interface MerchantConfigParams extends MerchantRPCs {
      * tried before the built-in onchain token logo lookup
      */
     getTokenLogo?: TokenLogoResolver,
-    /** IPFS gateway used to resolve `ipfs://` logo URIs (default https://ipfs.io/ipfs/) */
-    ipfsGateway?: string,
 };
 
 interface MerchantConfigBasics extends MerchantConfigParams {
@@ -508,8 +489,6 @@ interface MerchantConfigBasics extends MerchantConfigParams {
     merchantSlateContract: string,
     /** Time Limit (Cache Valid RPC) - default (1 min) */
     validRPCTime: number;
-    /** IPFS gateway used to resolve `ipfs://` logo URIs */
-    ipfsGateway: string;
 }
 
 export {
@@ -557,10 +536,6 @@ export {
 
     /** token logo lookup parameters */
     TokenLogoParams,
-    /** token contract logo getters */
-    TokenLogoContract,
-    /** token metadata json */
-    TokenMetadata,
 
     /** transaction function response */
     TransactionResponse,

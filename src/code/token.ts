@@ -3,6 +3,7 @@ import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataExtendedOb
 import { readCache, saveCache } from "./cache";
 import { getChainsData } from "./config";
 import { ZERO_ADDRESS } from "./contract";
+import { resolveTokenLogo } from "./logos";
 import { decimalFactor, divideNumbers, getContract } from "./methods";
 
 const
@@ -65,19 +66,6 @@ const
             return
         };
     },
-    /** Token Logo (CoinGecko) */
-    getTokenLogo = async (
-        chain: ChainIds,
-        tokenAddress: EVMAddress,
-    ): Promise<string | undefined> => {
-        const
-            response = await fetch(
-                `https://api.coingecko.com/api/v3/coins/`
-                + `${getChainsData()[chain].coingeckoId}/contract/${tokenAddress}`
-            ),
-            data = await response?.json();
-        return data?.image?.large
-    },
     /** Token Data */
     getTokenData = async (
         chain: ChainIds,
@@ -118,17 +106,16 @@ const
 
             // get data
             const
-                logo = (
-                    skipLogo ? nativeLogo : await getTokenLogo(
-                        chain,
-                        tokenAddress
-                    )
-                ) || nativeLogo,
-                onchainData = await tokenOnchainData(chain, tokenAddress);
+                [logo, onchainData] = await Promise.all([
+                    skipLogo
+                        ? nativeLogo
+                        : resolveTokenLogo({ chain, tokenAddress }),
+                    tokenOnchainData(chain, tokenAddress),
+                ]);
             if (onchainData) {
                 const tokenDataObj: TokenDataExtended = {
                     ...onchainData,
-                    logo,
+                    logo: logo || nativeLogo,
                 };
                 tokensDataCache[chain][tokenAddress] = {
                     updateTime: Date.now(),
@@ -196,7 +183,6 @@ const
     };
 
 export {
-    getTokenLogo,
     getTokenData,
     tokenOnchainData,
     getTokenRate,

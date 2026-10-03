@@ -10,7 +10,8 @@ const commonConfig: Configuration = {
     resolve: {
         extensions: [`.ts`, `.js`], // Resolve .ts and .js files
         fallback: {
-            fetch: require.resolve(`node-fetch`),
+            bufferutil: false,
+            'utf-8-validate': false,
         },
     },
     module: {

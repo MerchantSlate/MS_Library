@@ -131,6 +131,29 @@ interface TokenRateObj {
     },
 };
 
+/** token logo lookup parameters */
+interface TokenLogoParams {
+    chain: ChainIds,
+    tokenAddress: EVMAddress,
+};
+
+/** token contract logo getters (non-standard) */
+interface TokenLogoContract {
+    logoURI?: () => Promise<string>,
+    logo?: () => Promise<string>,
+    image?: () => Promise<string>,
+    icon?: () => Promise<string>,
+    tokenURI?: () => Promise<string>,
+};
+
+/** token metadata json */
+interface TokenMetadata {
+    image?: string,
+    image_url?: string,
+    image_data?: string,
+    data?: { image?: string },
+};
+
 interface Payment {
     /** Unique identifier for the payment transaction */
     id: string;
@@ -284,8 +307,6 @@ export interface BlockchainNetwork {
     blockExplorerUrls: string[];
     /** Optional logo URL for the chain */
     logo: string;
-    /** The CoinGecko ID for the chain (used for fetching price data) */
-    coingeckoId: string;
     /** The explorer URL to view transactions on the blockchain */
     explorer: string;
 }
@@ -439,6 +460,12 @@ type MerchantRPCs = {
     [K in ChainIds as `${K}_RPC`]?: string | string[];
 };
 
+/** Custom Token Logo Resolver */
+type TokenLogoResolver = (
+    chain: ChainIds,
+    tokenAddress: EVMAddress,
+) => Promise<string | undefined>;
+
 interface MerchantConfigParams extends MerchantRPCs {
     /** browser extension wallet */
     browserWallet?: string,
@@ -466,6 +493,14 @@ interface MerchantConfigParams extends MerchantRPCs {
     consoleLogEnabled?: boolean,
     /** Time Limit (Cache Valid RPC) - default (1 min) */
     validRPCTime?: number;
+    /**
+     * Custom token logo resolver (optional)
+     *
+     * tried before the built-in onchain token logo lookup
+     */
+    getTokenLogo?: TokenLogoResolver,
+    /** IPFS gateway used to resolve `ipfs://` logo URIs (default https://ipfs.io/ipfs/) */
+    ipfsGateway?: string,
 };
 
 interface MerchantConfigBasics extends MerchantConfigParams {
@@ -473,6 +508,8 @@ interface MerchantConfigBasics extends MerchantConfigParams {
     merchantSlateContract: string,
     /** Time Limit (Cache Valid RPC) - default (1 min) */
     validRPCTime: number;
+    /** IPFS gateway used to resolve `ipfs://` logo URIs */
+    ipfsGateway: string;
 }
 
 export {
@@ -517,6 +554,13 @@ export {
 
     /** tokens price cache */
     TokenRateObj,
+
+    /** token logo lookup parameters */
+    TokenLogoParams,
+    /** token contract logo getters */
+    TokenLogoContract,
+    /** token metadata json */
+    TokenMetadata,
 
     /** transaction function response */
     TransactionResponse,
@@ -568,6 +612,8 @@ export {
 
     /** MerchantSlate RPCs */
     MerchantRPCs,
+    /** Custom Token Logo Resolver */
+    TokenLogoResolver,
     /** MerchantSlate Config */
     MerchantConfigParams,
     /** MerchantSlate Base Config */

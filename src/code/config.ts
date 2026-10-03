@@ -1,5 +1,5 @@
 import chainsDataJSON from "../data/chains_data.json";
-import { merchantSlateContract } from "../data/contract_address.json";
+import contractAddress from "../data/contract_address.json";
 import { MerchantConfigBasics, MerchantConfigParams, SUPPORTED_CHAINS, SupportedChainsData } from "../types";
 import { errorResponse } from "./contract";
 import { configLargeSuffix } from "./showcase";
@@ -11,7 +11,7 @@ const
     getChainsData = () => chainsData,
     /** Merchant Slate configuration */
     configuration: MerchantConfigBasics = {
-        merchantSlateContract,
+        merchantSlateContract: contractAddress.merchantSlateContract,
         consoleLogEnabled: true,
         validRPCTime: 6e4,
     },

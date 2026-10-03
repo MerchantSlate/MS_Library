@@ -1,4 +1,5 @@
-import { ethers, toBigInt } from "ethers";
+import { toBigInt } from "ethers/utils";
+import { Interface } from "ethers/abi";
 import {
     ChainIds,
     EVMAddress,
@@ -121,13 +122,13 @@ const
                 token: TokenData = await getTokenData(chain, tokenAddress, true) || {} as TokenData,
                 amount = (toBigInt(product?.amount || 0) * toBigInt(quantity))?.toString(),
                 isNative = tokenAddress == ZERO_ADDRESS,
-                payTx = new ethers.Interface(contractABI)
+                payTx = new Interface(contractABI)
                     ?.encodeFunctionData(`payProduct`, [
                         productId,
                         quantity
                     ]),
                 approveTx = isNative ? ``
-                    : new ethers.Interface(approveABI)
+                    : new Interface(approveABI)
                         ?.encodeFunctionData(`approve`, [
                             merchantSlateContract,
                             amount

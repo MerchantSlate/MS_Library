@@ -1,13 +1,8 @@
-import {
-    toBigInt,
-    BrowserProvider,
-    JsonRpcProvider,
-    Wallet,
-    InterfaceAbi,
-    Contract,
-    Network,
-    FallbackProvider,
-} from "ethers";
+import { toBigInt } from "ethers/utils";
+import { BrowserProvider, JsonRpcProvider } from "ethers/providers";
+import { Wallet } from "ethers/wallet";
+import { Contract } from "ethers/contract";
+import type { InterfaceAbi } from "ethers/abi";
 import contractABI from "../data/contract_abi.json";
 import approveABI from "../data/approve_abi.json";
 import { config, getChainsData, getConfig } from "./config";

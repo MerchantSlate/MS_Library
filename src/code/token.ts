@@ -1,4 +1,4 @@
-import { ZeroAddress } from "ethers";
+import { ZeroAddress } from "ethers/constants";
 import { ChainIds, EVMAddress, TokenData, TokenDataExtended, TokenDataExtendedObj, TokenDataRaw, TokenLogoParams, TokenRateObj } from "../types";
 import { readCache, saveCache } from "./cache";
 import { getChainsData, getConfig } from "./config";

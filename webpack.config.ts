@@ -18,7 +18,15 @@ const commonConfig: Configuration = {
         rules: [
             {
                 test: /\.ts$/,         // Match .ts files
-                use: `ts-loader`,      // Use ts-loader for TypeScript
+                use: {                 // Use ts-loader for TypeScript
+                    loader: `ts-loader`,
+                    options: {
+                        compilerOptions: {
+                            // Emit ESM so webpack can tree-shake dependencies (e.g. ethers)
+                            module: `ESNext`,
+                        },
+                    },
+                },
                 exclude: /node_modules/,
             },
         ],
@@ -30,10 +38,7 @@ const commonConfig: Configuration = {
             banner: `/*! MIT License. MerchantSlate Contract SDK. https://opensource.org/licenses/MIT */`,
             raw: true, // Ensures the comment appears as-is without being wrapped
         }),
-    ].filter(plugin =>
-        // Bundle analyzer is opt-in (ANALYZE=true) to keep builds headless
-        !(plugin instanceof BundleAnalyzerPlugin) || process.env.ANALYZE
-    ) as any,
+    ],
     optimization: {
         minimize: true,           // Minify the output
         minimizer: [new TerserPlugin()],

@@ -1,4 +1,4 @@
-import { ZeroAddress } from "ethers";
+import { ZeroAddress } from "ethers/constants";
 import {
     ChainIds,
     EVMAddress,

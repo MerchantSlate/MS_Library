@@ -66,7 +66,7 @@ pnpm add @merchantslate/legacy
 Or use it in browsers through a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@1.2.0/dist/browser/merchant.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@merchantslate/legacy@1.3.0/dist/browser/merchant.min.js"></script>
 ```
 
 `merchant` is the browser global object exposing all library functions.

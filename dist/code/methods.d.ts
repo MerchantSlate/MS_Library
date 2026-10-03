@@ -1,4 +1,5 @@
-import { BrowserProvider, JsonRpcProvider, InterfaceAbi } from "ethers";
+import { BrowserProvider, JsonRpcProvider } from "ethers/providers";
+import type { InterfaceAbi } from "ethers/abi";
 import { ChainIds, ContractFunctions, EVMAddress, ResultPromise } from "../types";
 declare const 
 /** Get BigNumbers */
